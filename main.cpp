@@ -64,17 +64,7 @@ int main(){
 
 	commandLine = scanner(command);
 	curLineError = parser(commandLine);
-	if (showTokens)
-	{
-		for (int i = 0; i < commandLine.size(); i++){
-			cout << "Token Type = ";
-			cout << setw(10) << left << commandLine[i].get_type();
-			cout << "Token = ";
-			cout << setw(20) << left << commandLine[i].get_token();
-			cout << "Usage = ";
-			cout << setw(15) << left << commandLine[i].get_usage() << endl;
-		}
-	}
+	
 	return 0;
 }
 
@@ -184,7 +174,12 @@ bool parser(vector<Token> &scanned){
 	if (scanned[0].get_type()== "keyword") {
 		if (upper(scanned[0].get_token())== "DEFPROMPT")
 		{
-			/* code */
+			//defprompt expects 2 parameters
+			if (scannedLength != 2){
+				return founderror;
+			}
+			promptToken = scanned[1].get_token();
+			return !founderror;
 		}
 		if (upper(scanned[0].get_token())== "CD")
 		{
@@ -196,7 +191,10 @@ bool parser(vector<Token> &scanned){
 		}
 		if (upper(scanned[0].get_token())== "BYE")
 		{
-			/* code */
+			if (scannedLength != 2){
+				return founderror;
+			}
+			exit(0);
 		}
 		if (upper(scanned[0].get_token())== "RUN")
 		{
@@ -237,6 +235,18 @@ bool parser(vector<Token> &scanned){
 	// no error found
 	return !founderror;
 	
+}
+
+void showInfo(Token token){
+	if (showTokens)
+	{
+			cout << "Token Type = ";
+			cout << setw(10) << left << token.get_type();
+			cout << "Token = ";
+			cout << setw(20) << left << token.get_token();
+			cout << "Usage = ";
+			cout << setw(15) << left << token.get_usage() << endl;
+	}
 }
 
 
