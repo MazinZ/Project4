@@ -113,33 +113,47 @@ bool parse(vector<Token> scanned){
 	if (scannedLength == 0)
 		return founderror;
 		
+	// if the first token is #, it's a comment an no error
 	if (scanned[0].get_token() == "#")
 		return !founderror;
+	
+	// if the first token is a variable it has to be of the form [variable, =, value]
 	if (scanned[0].get_type()== "variable") {
-		if (scannedLength > 3)
+		// if there aren't exactly 3 tokens (variable, assignment, value), it's an error
+		if (scannedLength != 3)
 			return founderror;
+		// if the second token isn't an equal sign, there is no assignment and it's an error
 		if (scanned[1].get_token()!="=")
 			return founderror;
 	}
+	
 	if (scanned[0].get_token()=="cd"){
+		// we don't need to handle cd by itself, so return error
 		if (scannedLength==1)
 			return founderror;
+		// a variable can only have a value that is a word or a string, otherwise return error
 		if (scanned[1].get_type()!= "word" || scanned[1].get_type()!="string")
 			return founderror;
+		// listprocs and bye must be alone on the line
 		if ((scanned[0].get_token() == "listprocs" || scanned[0].get_token() == "bye") && scannedLength>1)
 			return founderror;
 	}
+	
 	if (scanned[0].get_token() == "run"){
+		// run has to at least have two tokens, run and a command
 		if (scannedLength < 2)
 			return founderror;
+		// a command can only be a string, variable or word. Otherwise return an error.
 		if (scanned[1].get_type()!="string" || scanned[1].get_type()!="variable" || scanned[1].get_type()!="word")
 			return founderror;
 		if (scanned[0].get_token() == "assignto"){
+			// <bg> option isn't allowed with assignto.
 			if (scannedLength<3 || scanned.back().get_token() == "<bg>")
 				return founderror;
 		}
 	
 	}
+	// no error found
 	return !founderror;
 	
 }
