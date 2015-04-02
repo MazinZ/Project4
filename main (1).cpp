@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#include <iomanip>
 using namespace std;
 
 struct Token{
@@ -57,9 +58,12 @@ int main(){
 	if (showTokens)
 	{
 		for (int i = 0; i < commandLine.size(); i++){
-			cout << "Token Type = " << commandLine[i].get_token() << "\t";
-			cout << "Token = " << commandLine[i].get_type() << "\t";
-			cout << "Usage = " << commandLine[i].get_usage() << endl;
+			cout << "Token Type = ";
+			cout << setw(13) << left << commandLine[i].get_token();
+			cout << "Token = ";
+			cout << setw(24) << left << commandLine[i].get_type();
+			cout << "Usage = ";
+			cout << setw(18) << left << commandLine[i].get_usage() << endl;
 		}
 	}
 	return 0;
