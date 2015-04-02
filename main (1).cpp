@@ -37,7 +37,6 @@ int main(){
 	commandLine = scanner(command);
 	for (int i = 0; i < commandLine.size(); i++)
 		cout << commandLine[i].get_token() << " " << commandLine[i].get_type() << endl;
-	system("PAUSE");
 	return 0;
 }
 
