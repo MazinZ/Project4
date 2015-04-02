@@ -19,7 +19,7 @@ public:
 		token = t2;
 		usage = t3;
 	}
-	void setUsage(string t3){
+	void set_usage(string t3){
 		usage = t3;
 	}
 	string get_token()
@@ -41,7 +41,7 @@ private:
 string typeGet(string token);
 vector<Token> scanner(string s);
 string upper(string s);
-bool parser(vector<Token> scanned);
+bool parser(vector<Token> &scanned);
 
 bool showTokens = true;
 //string PATH = "";
@@ -59,11 +59,11 @@ int main(){
 	{
 		for (int i = 0; i < commandLine.size(); i++){
 			cout << "Token Type = ";
-			cout << setw(12) << left << commandLine[i].get_token();
+			cout << setw(10) << left << commandLine[i].get_token();
 			cout << "Token = ";
-			cout << setw(24) << left << commandLine[i].get_type();
+			cout << setw(20) << left << commandLine[i].get_type();
 			cout << "Usage = ";
-			cout << setw(16) << left << commandLine[i].get_usage() << endl;
+			cout << setw(15) << left << commandLine[i].get_usage() << endl;
 		}
 	}
 	return 0;
@@ -138,15 +138,22 @@ string upper(string s){
 
 ////////////////////// Parsing ///////////////////////////
 
-bool parser(vector<Token> scanned){
+bool parser(vector<Token> &scanned){
 	bool founderror = true;
 	int scannedLength = scanned.size();
 	if (scannedLength == 0)
 		return founderror;
 		
-	// if the first token is #, it's a comment an no error
-	if (scanned[0].get_token() == "#")
+	// if the first token is #, it's a comment
+	// assign the comment usage to the # and the anyText usage to the rest of the line
+	if (scanned[0].get_token() == "#"){
+		scanned[0].set_usage("comment");
+		for (int i = 1; i < scannedLength; i++)
+		{
+			scanned[i].set_usage("anyText");
+		}
 		return !founderror;
+	}
 	
 	// if the first token is a variable it has to be of the form [variable, =, value]
 	if (scanned[0].get_type()== "variable") {
