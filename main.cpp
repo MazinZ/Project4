@@ -9,14 +9,14 @@ struct Token{
 public:
 	Token(string t1, string t2)
 	{
-		type = t1;	
-		token = t2;
+		type = t2;	
+		token = t1;
 		usage = "";
 	}
 	Token(string t1, string t2, string t3)
 	{
-		type = t1;	
-		token = t2;
+		type = t2;	
+		token = t1;
 		usage = t3;
 	}
 	void set_usage(string t3){
