@@ -155,16 +155,20 @@ bool parser(vector<Token> &scanned){
 		return !founderror;
 	}
 	
-	// variable form [variable, =, value]
-	if (scanned[0].get_type()== "word" && scanned[1].get_token()== "=") {
-		// if there aren't exactly 3 tokens (variable, assignment, value), it's an error
-		if (scannedLength != 3){
-			return founderror;
-		}
+	// if the first token is a word
+	if (scanned[0].get_type()== "word") {
 
-		scanned[0].set_usage("variable");
-		scanned[1].set_usage("assignment");
-		scanned[2].set_usage("variableDef");
+		// variable form [variable, =, value]
+		if(scanned[1].get_token()== "="){
+			// if there aren't exactly 3 tokens (variable, assignment, value), it's an error
+			if (scannedLength != 3){
+				return founderror;
+			}
+
+			scanned[0].set_usage("variable");
+			scanned[1].set_usage("assignment");
+			scanned[2].set_usage("variableDef");
+		}
 	}
 	
 	if (scanned[0].get_token()=="cd"){
