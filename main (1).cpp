@@ -28,6 +28,7 @@ vector<Token> scanner(string s);
 string upper(string s);
 
 
+
 int main(){
 	string command;
 	getline(cin, command);
@@ -101,6 +102,45 @@ string upper(string s){
        uppercase += toupper(s[i]);
 
    return uppercase;
+}
+
+
+////////////////////// Parsing ///////////////////////////
+
+bool parse(vector<Token> scanned){
+	bool founderror = true;
+	int scannedLength = scanned.size();
+	if (scannedLength == 0)
+		return founderror;
+		
+	if (scanned[0].get_token() == "#")
+		return !founderror;
+	if (scanned[0].get_type()== "variable") {
+		if (scannedLength > 3)
+			return founderror;
+		if (scanned[1]!="=")
+			return founderror;
+	}
+	if (scanned[0]=="cd"){
+		if (scannedLength==1)
+			return founderror;
+		if (scanned[1].get_type()!= "word" || scanned[1].get_type()!="string")
+			return founderror;
+		if ((scanned[0] = "listprocs" || scanned[0] == "bye") && scannedLength>1)
+			return founderror;
+	}
+	if (scanned[0] == "run"){
+		if (scannedLength < 2)
+			return founderror;
+		if (scanned[1].get_type()!="string" || scanned[1].get_type()!="variable" || scanned[1].get_type()!="word")
+			return founderror;
+		if (scanned[0] == "assignto"){
+			if (scannedLength<3 || vector.back() == "<bg>")
+				return founderror;
+		}
+	
+	}
+	
 }
 
 
