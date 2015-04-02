@@ -11,6 +11,15 @@ public:
 		type = t1;	
 		token = t2;
 	}
+	Token(string t1, string t2, string t3)
+	{
+		type = t1;	
+		token = t2;
+		usage = t3;
+	}
+	void setUsage(string t3){
+		usage = t3;
+	}
 	string get_token()
 	{
 		return token;
@@ -18,25 +27,41 @@ public:
 	string get_type(){
 		return type;
 	}
+	string get_usage(){
+		if(usage){
+			return usage;
+		}
+		return "";
+	}
 private:
 	string type;
 	string token;
+	string usage;
 };
 
 string typeGet(string token);
 vector<Token> scanner(string s);
 string upper(string s);
+bool parser(vector<Token> scanned);
 
+bool showTokens = true;
+//string PATH = "";
 
 
 int main(){
 	string command;
 	getline(cin, command);
 	vector<Token> commandLine;
-	
+	bool curLineError;
+
 	commandLine = scanner(command);
-	for (int i = 0; i < commandLine.size(); i++)
-		cout << commandLine[i].get_token() << " " << commandLine[i].get_type() << endl;
+	curLineError = parser(commandLine);
+	if (showTokens)
+	{
+		for (int i = 0; i < commandLine.size(); i++){
+			cout << commandLine[i].get_token() << " " << commandLine[i].get_type() << endl;
+		}
+	}
 	return 0;
 }
 
@@ -109,7 +134,7 @@ string upper(string s){
 
 ////////////////////// Parsing ///////////////////////////
 
-bool parse(vector<Token> scanned){
+bool parser(vector<Token> scanned){
 	bool founderror = true;
 	int scannedLength = scanned.size();
 	if (scannedLength == 0)
