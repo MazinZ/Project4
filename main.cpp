@@ -83,12 +83,20 @@ int main(){
 	vector<Token> commandLine;
 	bool curLineError = false;
 	
-	while(true){
-		//prompt for input
-		cout << promptToken;
+	//initial prompt
+	cout << promptToken;
 
-		//get input
-		getline(cin, command);
+	while(getline(cin, command)){
+
+		if (cin.bad()) {
+	    	// IO error
+		} else if (!cin.eof()) {
+	    // format error (not possible with getline but possible with operator>>)
+		} else {
+	    	// format error (not possible with getline but possible with operator>>)
+	    	// or end of file (can't make the difference)
+	    	return 0;
+		}
 
 		//scanner
 		commandLine = scanner(command);
@@ -103,6 +111,9 @@ int main(){
 			//runner
 			programRun(commandLine);
 		}
+
+		//prompt for next run of while
+		cout << promptToken;
 
 	}
 	return 0;
@@ -344,7 +355,7 @@ void programRun(vector<Token> parsed){
 	else if (upper(parsed[0].get_token())=="DEFPROMPT") {
 		promptToken = parsed[1].get_token();
 	}
-	else if (parsed[0].get_type()=="WORD" && parsed[1].get_token()=="="){
+	else if (upper(parsed[0].get_type())=="WORD" && parsed[1].get_token()=="="){
 		bool exists = false;
 		for (int i = 0; i < variableList.size(); i++){
 			if (parsed[0].get_token() == variableList[i].get_name()){
@@ -357,7 +368,7 @@ void programRun(vector<Token> parsed){
 			}
 		}
 	}
-	else if (parsed[0].get_token()=="BYE"){
+	else if (upper(parsed[0].get_token())=="BYE"){
 		exit(0);
 	}
 	
