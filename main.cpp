@@ -81,23 +81,30 @@ string promptToken = "sish >";
 int main(){
 	string command;
 	vector<Token> commandLine;
-	bool curLineError;
-
-	//prompt for input
-	cout << promptToken;
-
-	//get input
-	getline(cin, command);
-
-	//scanner
-	commandLine = scanner(command);
-
-	//parser
-	curLineError = parser(commandLine);
-
-	//show tokens
-	showInfo(commandLine);
+	bool curLineError = false;
 	
+	while(true){
+		//prompt for input
+		cout << promptToken;
+
+		//get input
+		getline(cin, command);
+
+		//scanner
+		commandLine = scanner(command);
+
+		//parser
+		curLineError = parser(commandLine);
+
+		if(!curLineError){
+			//show tokens
+			showInfo(commandLine);
+
+			//runner
+			programRun(commandLine);
+		}
+
+	}
 	return 0;
 }
 
@@ -209,7 +216,7 @@ bool parser(vector<Token> &scanned){
 		if (upper(scanned[0].get_token())== "DEFPROMPT")
 		{
 			//defprompt expects 2 parameters
-			if (scannedLength > 2){
+			if (scannedLength != 2){
 				perror("defprompt expects 2 parameters");
 				return founderror;
 			}
