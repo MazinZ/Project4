@@ -3,6 +3,7 @@
 #include <string>
 #include <algorithm>
 #include <iomanip>
+#include <sstream>
 using namespace std;
 
 struct Token{
@@ -42,6 +43,7 @@ string typeGet(string token);
 vector<Token> scanner(string s);
 string upper(string s);
 bool parser(vector<Token> &scanned);
+void showInfo(vector<Token> tokens);
 
 bool showTokens = true;
 string promptToken = "sish >";
@@ -171,6 +173,7 @@ bool parser(vector<Token> &scanned){
 			scanned[1].set_usage("assignment");
 			scanned[2].set_usage("variableDef");
 		}
+		return !founderror;
 	}
 
 	// if the first token is a word
@@ -178,35 +181,92 @@ bool parser(vector<Token> &scanned){
 		if (upper(scanned[0].get_token())== "DEFPROMPT")
 		{
 			//defprompt expects 2 parameters
-			if (scannedLength != 2){
+			if (scannedLength > 2){
+				perror("defprompt expects 2 parameters");
 				return founderror;
 			}
-			promptToken = scanned[1].get_token();
-			return !founderror;
+			scanned[0].set_usage("defprompt");
+			scanned[1].set_usage("prompt");
+			//promptToken = scanned[1].get_token();
+
 		}
 		if (upper(scanned[0].get_token())== "CD")
 		{
-			/* code */
+			if (scannedLength < 2){
+				perror("cd must be accompanied by a directory");
+				return founderror;
+			}
+			if (scannedLength > 2){
+				perror("cd expects 2 parameters");
+				return founderror;
+			}
+
+			scanned[0].set_usage("cd");
+			scanned[1].set_usage("directoryName");
+
 		}
 		if (upper(scanned[0].get_token())== "LISTPROCS")
 		{
-			/* code */
+			if (scannedLength != 1){
+				perror("listprocs does not expect more than 1 parameter");
+				return founderror;
+			}
+			scanned[0].set_usage("listprocs");
 		}
 		if (upper(scanned[0].get_token())== "BYE")
 		{
-			if (scannedLength != 2){
+			if (scannedLength != 1){
+				perror("bye does not expect more than 1 parameter");
 				return founderror;
 			}
-			
+			scanned[0].set_usage("bye");
 		}
 		if (upper(scanned[0].get_token())== "RUN")
 		{
-			/* code */
+			if (scannedLength < 2){
+				perror("run expects 2 or more parameters");
+				return founderror;
+			}
+			scanned[0].set_usage("run");
+			//TODO: make sure cmd is a valid command
+			scanned[1].set_usage("cmd");
+			string parameterCount;
+			
+			for (int i = 2; i < scannedLength; i++)
+			{
+				ostringstream parameterCount;
+				parameterCount << "parameter " << i-1;
+				scanned[i].set_usage(parameterCount.str());
+			}
+
+			if (upper(scanned[scannedLength-1].get_token()) == "<BG>")
+			{
+				//mark the ending token usage as <bg>
+				scanned[scannedLength-1].set_usage("<bg>"); 
+			}
+
 		}
 		if (upper(scanned[0].get_token())== "ASSIGNTO")
 		{
-			/* code */
+			if (scannedLength < 3){
+				perror("assignto expects 3 or more parameters");
+				return founderror;
+			}
+			scanned[0].set_usage("assignto");
+			if (scanned[1].get_type()!="variable")
+			{
+				perror("invalid variable");
+				return founderror;
+			}
+			scanned[1].set_usage("variable");
+			if (scanned[2].get_type()!="string" && scanned[2].get_type()!="variable" && scanned[2].get_type()!="word"){
+				perror("Commands must be in the form of a string, variable, or word.");
+				return founderror;
+			}
+			scanned[2].set_usage("cmd");
 		}
+
+		return !founderror;
 	}
 	
 	if (scanned[0].get_token()=="cd"){
@@ -223,11 +283,8 @@ bool parser(vector<Token> &scanned){
 	
 	if (scanned[0].get_token() == "run"){
 		// run has to at least have two tokens, run and a command
-		if (scannedLength < 2)
-			return founderror;
 		// a command can only be a string, variable or word. Otherwise return an error.
-		if (scanned[1].get_type()!="string" || scanned[1].get_type()!="variable" || scanned[1].get_type()!="word")
-			return founderror;
+
 		if (scanned[0].get_token() == "assignto"){
 			// <bg> option isn't allowed with assignto.
 			if (scannedLength<3 || scanned.back().get_token() == "<bg>")
