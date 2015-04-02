@@ -182,7 +182,27 @@ bool parser(vector<Token> &scanned){
 
 	// if the first token is a word
 	if (scanned[0].get_type()== "keyword") {
-		if (scanned[0].get_token()== "")
+		if (upper(scanned[0].get_token())== "DEFPROMPT")
+		{
+			/* code */
+		}
+		if (upper(scanned[0].get_token())== "CD")
+		{
+			/* code */
+		}
+		if (upper(scanned[0].get_token())== "LISTPROCS")
+		{
+			/* code */
+		}
+		if (upper(scanned[0].get_token())== "BYE")
+		{
+			/* code */
+		}
+		if (upper(scanned[0].get_token())== "RUN")
+		{
+			/* code */
+		}
+		if (upper(scanned[0].get_token())== "ASSIGNTO")
 		{
 			/* code */
 		}
