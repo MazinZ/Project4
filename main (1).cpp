@@ -28,10 +28,7 @@ public:
 		return type;
 	}
 	string get_usage(){
-		if(usage){
-			return usage;
-		}
-		return "";
+		return usage;
 	}
 private:
 	string type;
