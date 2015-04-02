@@ -4,8 +4,6 @@
 #include <algorithm>
 #include <iomanip>
 #include <sstream>
-#include <stdlib.h>
-#include <unistd.h>
 using namespace std;
 
 struct Token{
@@ -41,37 +39,10 @@ private:
 	string usage;
 };
 
-struct Variable{
-	public:
-		Variable(string n, string v)
-		{
-			name = n;
-			value = v;	
-		}
-		string get_name()
-		{
-			return name;
-		}
-		string get_value() {
-			return value;
-		}
-		void set_value(string v){
-			value = v;
-		}
-	private:
-		string name;
-		string value;
-		
-	
-};
-
-vector<Variable> variableList;
 string typeGet(string token);
 vector<Token> scanner(string s);
 string upper(string s);
-
 bool parser(vector<Token> &scanned);
-void programRun(vector<Token> parsed);
 void showInfo(vector<Token> tokens);
 
 bool showTokens = true;
@@ -241,24 +212,6 @@ bool parser(vector<Token> &scanned){
 				return founderror;
 			}
 			scanned[0].set_usage("listprocs");
-		{
-			if (scannedLength==1){
-				perror("cd command must be accompanied by a directory.");
-			}
-			else if (scannedLength>2){
-				perror("Too many parameters; cd expecting 2");
-			}
-			else{
-				
-				
-			}
-			
-			/* code */
-		}
-		if (upper(scanned[0].get_token())== "LISTPROCS")
-		{
-			
-			/* code */
 		}
 		if (upper(scanned[0].get_token())== "BYE")
 		{
@@ -334,41 +287,15 @@ bool parser(vector<Token> &scanned){
 
 		if (scanned[0].get_token() == "assignto"){
 			// <bg> option isn't allowed with assignto.
-			if (scannedLength<3 || scanned.back().get_token() == "<bg>"){
+			if (scannedLength<3 || scanned.back().get_token() == "<bg>")
 				return founderror;
-			}
 		}
 	
 	}
 	// no error found
 	return !founderror;
-	}
+	
 }
-
-void programRun(vector<Token> parsed){
-	if (upper(parsed[0]=="CD"){
-			chdir(parsed[1]);		
-	}
-	else if (upper(parsed[0])=="DEFPROMPT") {
-		promptToken = parsed[1];
-	}
-	else if (parsed[0].get_type()=="WORD" && parsed[1].get_token()=="="){
-		bool exists = false;
-		for (int i = 0; i < variableList.size(); i++){
-			if (parsed[0].get_token() == variableList[i].get_name()){
-				variableList[i].set_value() == parsed[2];
-				exists = true;
-				break;
-			}
-			if (!exists){
-				variableList.append(Variable(parsed[0],parsed[2]));
-			}
-		}
-	}
-	else if (parsed[0]=="BYE"){
-		exit(0);
-	}
-	}
 
 void showInfo(vector<Token> tokens){
 	if (showTokens){
