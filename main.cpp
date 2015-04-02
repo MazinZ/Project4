@@ -156,7 +156,7 @@ bool parser(vector<Token> &scanned){
 	}
 	
 	// variable form [variable, =, value]
-	if (scanned[0].get_type()== "word" && scanned[0].get_token()== "=") {
+	if (scanned[0].get_type()== "word" && scanned[1].get_token()== "=") {
 		// if there aren't exactly 3 tokens (variable, assignment, value), it's an error
 		if (scannedLength != 3){
 			return founderror;
