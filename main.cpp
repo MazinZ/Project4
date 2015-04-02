@@ -326,26 +326,26 @@ bool parser(vector<Token> &scanned){
 }
 
 void programRun(vector<Token> parsed){
-	if (upper(parsed[0])=="CD"){
-			chdir(parsed[1]);		
+	if (upper(parsed[0].get_type())=="CD"){
+			//chdir(parsed[1].get_token());		
 	}
-	else if (upper(parsed[0])=="DEFPROMPT") {
-		promptToken = parsed[1];
+	else if (upper(parsed[0].get_type())=="DEFPROMPT") {
+		promptToken = parsed[1].get_token();
 	}
 	else if (parsed[0].get_type()=="WORD" && parsed[1].get_token()=="="){
 		bool exists = false;
 		for (int i = 0; i < variableList.size(); i++){
 			if (parsed[0].get_token() == variableList[i].get_name()){
-				variableList[i].set_value() == parsed[2];
+				variableList[i].set_value(parsed[2].get_token());
 				exists = true;
 				break;
 			}
 			if (!exists){
-				variableList.append(Variable(parsed[0],parsed[2]));
+				variableList.append(Variable(parsed[0].get_token(),parsed[2].get_token()));
 			}
 		}
 	}
-	else if (parsed[0]=="BYE"){
+	else if (parsed[0].get_token()=="BYE"){
 		exit(0);
 	}
 	
@@ -364,5 +364,4 @@ void showInfo(vector<Token> tokens){
  		}
  	}
 }
-
 
