@@ -341,7 +341,7 @@ void programRun(vector<Token> parsed){
 				break;
 			}
 			if (!exists){
-				variableList.append(Variable(parsed[0].get_token(),parsed[2].get_token()));
+				variableList.push_back(Variable(parsed[0].get_token(),parsed[2].get_token()));
 			}
 		}
 	}
