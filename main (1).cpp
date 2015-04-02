@@ -59,7 +59,9 @@ int main(){
 	if (showTokens)
 	{
 		for (int i = 0; i < commandLine.size(); i++){
-			cout << commandLine[i].get_token() << " " << commandLine[i].get_type() << endl;
+			cout << "Token Type = " << commandLine[i].get_token() << "\t";
+			cout << "Token = " << commandLine[i].get_type() << "\t";
+			cout << "Usage = " << commandLine[i].get_usage() << endl;
 		}
 	}
 	return 0;
