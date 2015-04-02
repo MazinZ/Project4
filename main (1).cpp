@@ -118,28 +118,29 @@ bool parse(vector<Token> scanned){
 	if (scanned[0].get_type()== "variable") {
 		if (scannedLength > 3)
 			return founderror;
-		if (scanned[1]!="=")
+		if (scanned[1].get_token()!="=")
 			return founderror;
 	}
-	if (scanned[0]=="cd"){
+	if (scanned[0].get_token()=="cd"){
 		if (scannedLength==1)
 			return founderror;
 		if (scanned[1].get_type()!= "word" || scanned[1].get_type()!="string")
 			return founderror;
-		if ((scanned[0] = "listprocs" || scanned[0] == "bye") && scannedLength>1)
+		if ((scanned[0].get_token() == "listprocs" || scanned[0].get_token() == "bye") && scannedLength>1)
 			return founderror;
 	}
-	if (scanned[0] == "run"){
+	if (scanned[0].get_token() == "run"){
 		if (scannedLength < 2)
 			return founderror;
 		if (scanned[1].get_type()!="string" || scanned[1].get_type()!="variable" || scanned[1].get_type()!="word")
 			return founderror;
-		if (scanned[0] == "assignto"){
-			if (scannedLength<3 || vector.back() == "<bg>")
+		if (scanned[0].get_token() == "assignto"){
+			if (scannedLength<3 || scanned.back().get_token() == "<bg>")
 				return founderror;
 		}
 	
 	}
+	return !founderror;
 	
 }
 
