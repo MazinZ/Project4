@@ -58,12 +58,15 @@ int main(){
 
 	//get input
 	getline(cin, command);
-	
 
-	
-
+	//scanner
 	commandLine = scanner(command);
+
+	//parser
 	curLineError = parser(commandLine);
+
+	//show tokens
+	showInfo(commandLine);
 	
 	return 0;
 }
@@ -194,7 +197,7 @@ bool parser(vector<Token> &scanned){
 			if (scannedLength != 2){
 				return founderror;
 			}
-			exit(0);
+			
 		}
 		if (upper(scanned[0].get_token())== "RUN")
 		{
@@ -237,16 +240,17 @@ bool parser(vector<Token> &scanned){
 	
 }
 
-void showInfo(Token token){
-	if (showTokens)
-	{
-			cout << "Token Type = ";
-			cout << setw(10) << left << token.get_type();
-			cout << "Token = ";
-			cout << setw(20) << left << token.get_token();
-			cout << "Usage = ";
-			cout << setw(15) << left << token.get_usage() << endl;
-	}
+void showInfo(vector<Token> tokens){
+	if (showTokens){
+ 		for (int i = 0; i < tokens.size(); i++){
+ 			cout << "Token Type = ";
+ 			cout << setw(10) << left << tokens[i].get_type();
+ 			cout << "Token = ";
+ 			cout << setw(20) << left << tokens[i].get_token();
+ 			cout << "Usage = ";
+ 			cout << setw(15) << left << tokens[i].get_usage() << endl;
+ 		}
+ 	}
 }
 
 
