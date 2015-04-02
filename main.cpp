@@ -59,11 +59,11 @@ int main(){
 	{
 		for (int i = 0; i < commandLine.size(); i++){
 			cout << "Token Type = ";
-			cout << setw(13) << left << commandLine[i].get_token();
+			cout << setw(12) << left << commandLine[i].get_token();
 			cout << "Token = ";
 			cout << setw(24) << left << commandLine[i].get_type();
 			cout << "Usage = ";
-			cout << setw(18) << left << commandLine[i].get_usage() << endl;
+			cout << setw(16) << left << commandLine[i].get_usage() << endl;
 		}
 	}
 	return 0;
