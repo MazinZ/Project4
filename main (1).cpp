@@ -74,10 +74,12 @@ vector<Token> scanner(string s) {
 string typeGet(string token){
 	bool validVariable = true;
 	if (upper(token) == "DEFPROMPT" || upper(token) == "CD" || upper(token) == "LISTJOBS" || upper(token) ==
-		"BYE" || upper(token) == "RUN" || upper(token) == "ASSIGNTO" || upper(token) == "<BG>")
+		"BYE" || upper(token) == "RUN" || upper(token) == "ASSIGNTO" || upper(token) == "<BG>") {
 		return "keyword";
-	else if (token.length() == 1 && (token.c_str()[0] == '#' || token.c_str()[0] == '='))
+	}
+	else if (token.length() == 1 && (token.c_str()[0] == '#' || token.c_str()[0] == '=')) {
 		return "metaChar";
+	}
 	else if (token.c_str()[0] == '$' && token.length() > 1)
 	{
 		for (int i = 1; i < token.length(); i++)
@@ -91,8 +93,9 @@ string typeGet(string token){
 		if (validVariable)
 			return "variable";
 	}
-	else
-		return "word";
+	//else
+	return "word";
+	
 }
 
 string upper(string s){
