@@ -65,14 +65,13 @@ struct Variable{
 	
 };
 
-
-
 vector<Variable> variableList;
-
 string typeGet(string token);
 vector<Token> scanner(string s);
 string upper(string s);
+
 bool parser(vector<Token> &scanned);
+void programRun(vector<Token> parsed);
 void showInfo(vector<Token> tokens);
 
 bool showTokens = true;
@@ -335,14 +334,15 @@ bool parser(vector<Token> &scanned){
 
 		if (scanned[0].get_token() == "assignto"){
 			// <bg> option isn't allowed with assignto.
-			if (scannedLength<3 || scanned.back().get_token() == "<bg>")
+			if (scannedLength<3 || scanned.back().get_token() == "<bg>"){
 				return founderror;
+			}
 		}
 	
 	}
 	// no error found
 	return !founderror;
-	
+	}
 }
 
 void programRun(vector<Token> parsed){
@@ -364,12 +364,11 @@ void programRun(vector<Token> parsed){
 				variableList.append(Variable(parsed[0],parsed[2]));
 			}
 		}
-	else if (parsed[0]=="BYE")
+	}
+	else if (parsed[0]=="BYE"){
 		exit(0);
 	}
-	
-	
-}
+	}
 
 void showInfo(vector<Token> tokens){
 	if (showTokens){
@@ -382,32 +381,6 @@ void showInfo(vector<Token> tokens){
  			cout << setw(15) << left << tokens[i].get_usage() << endl;
  		}
  	}
-}
-
-void programRun(vector<Token> parsed){
-	if (upper(parsed[0]=="CD"){
-			chdir(parsed[1]);		
-	}
-	else if (upper(parsed[0])=="DEFPROMPT") {
-		promptToken = parsed[1];
-	}
-	else if (parsed[0].get_type()=="WORD" && parsed[1].get_token()=="="){
-		bool exists = false;
-		for (int i = 0; i < variableList.size(); i++){
-			if (parsed[0].get_token() == variableList[i].get_name()){
-				variableList[i].set_value() == parsed[2];
-				exists = true;
-				break;
-			}
-			if (!exists){
-				variableList.append(Variable(parsed[0],parsed[2]));
-			}
-		}
-	else if (parsed[0]=="BYE")
-		exit(0);
-	}
-	
-	
 }
 
 
