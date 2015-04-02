@@ -10,6 +10,7 @@ public:
 	{
 		type = t1;	
 		token = t2;
+		usage = "";
 	}
 	Token(string t1, string t2, string t3)
 	{
