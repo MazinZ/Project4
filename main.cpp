@@ -44,14 +44,23 @@ string upper(string s);
 bool parser(vector<Token> &scanned);
 
 bool showTokens = true;
+string promptToken = "sish >";
 //string PATH = "";
 
 
 int main(){
 	string command;
-	getline(cin, command);
 	vector<Token> commandLine;
 	bool curLineError;
+
+	//prompt for input
+	cout << promptToken;
+
+	//get input
+	getline(cin, command);
+	
+
+	
 
 	commandLine = scanner(command);
 	curLineError = parser(commandLine);
@@ -168,6 +177,14 @@ bool parser(vector<Token> &scanned){
 			scanned[0].set_usage("variable");
 			scanned[1].set_usage("assignment");
 			scanned[2].set_usage("variableDef");
+		}
+	}
+
+	// if the first token is a word
+	if (scanned[0].get_type()== "keyword") {
+		if (scanned[0].get_token()== "")
+		{
+			/* code */
 		}
 	}
 	
