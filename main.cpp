@@ -341,7 +341,7 @@ void programRun(vector<Token> parsed){
 			  }
 				
 	}
-	else if (upper(parsed[0].get_type())=="DEFPROMPT") {
+	else if (upper(parsed[0].get_token())=="DEFPROMPT") {
 		promptToken = parsed[1].get_token();
 	}
 	else if (parsed[0].get_type()=="WORD" && parsed[1].get_token()=="="){
