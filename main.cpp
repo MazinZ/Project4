@@ -334,7 +334,12 @@ bool parser(vector<Token> &scanned){
 
 void programRun(vector<Token> parsed){
 	if (upper(parsed[0].get_type())=="CD"){
-			//chdir(parsed[1].get_token());		
+			char directory[1024];			
+			const char * newDirectory = parsed[1].get_token().c_str();
+			if(chdir(newDirectory) == 0) {
+				
+			  }
+				
 	}
 	else if (upper(parsed[0].get_type())=="DEFPROMPT") {
 		promptToken = parsed[1].get_token();
