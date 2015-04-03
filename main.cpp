@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <fstream>
+#include <errno.h>
 using namespace std;
 
 struct Token{
@@ -230,8 +231,14 @@ bool parser(vector<Token> &scanned){
 		if (upper(scanned[0].get_token())== "DEFPROMPT")
 		{
 			//defprompt expects 2 parameters
-			if (scannedLength != 2){
-				perror("defprompt expects 2 parameters");
+			if (scannedLength < 2){
+				errno = EINVAL;
+				perror("defprompt");
+				return founderror;
+			}
+			if (scannedLength > 2){
+				errno = E2BIG;
+				perror("defprompt");
 				return founderror;
 			}
 			scanned[0].set_usage("defprompt");
@@ -242,11 +249,13 @@ bool parser(vector<Token> &scanned){
 		if (upper(scanned[0].get_token())== "CD")
 		{
 			if (scannedLength < 2){
-				perror("cd must be accompanied by a directory");
+				errno = EINVAL;
+				perror("cd");
 				return founderror;
 			}
 			if (scannedLength > 2){
-				perror("cd expects 2 parameters");
+				errno = E2BIG;
+				perror("cd");
 				return founderror;
 			}
 
@@ -257,7 +266,8 @@ bool parser(vector<Token> &scanned){
 		if (upper(scanned[0].get_token())== "LISTPROCS")
 		{
 			if (scannedLength != 1){
-				perror("listprocs does not expect more than 1 parameter");
+				errno = E2BIG;
+				perror("listprocs");
 				return founderror;
 			}
 			scanned[0].set_usage("listprocs");
@@ -265,7 +275,8 @@ bool parser(vector<Token> &scanned){
 		if (upper(scanned[0].get_token())== "BYE")
 		{
 			if (scannedLength != 1){
-				perror("bye does not expect more than 1 parameter");
+				errno = E2BIG;
+				perror("bye");
 				return founderror;
 			}
 			scanned[0].set_usage("bye");
@@ -273,7 +284,8 @@ bool parser(vector<Token> &scanned){
 		if (upper(scanned[0].get_token())== "RUN")
 		{
 			if (scannedLength < 2){
-				perror("run expects 2 or more parameters");
+				errno = EINVAL;
+				perror("run");
 				return founderror;
 			}
 			scanned[0].set_usage("run");
@@ -298,18 +310,24 @@ bool parser(vector<Token> &scanned){
 		if (upper(scanned[0].get_token())== "ASSIGNTO")
 		{
 			if (scannedLength < 3){
-				perror("assignto expects 3 or more parameters");
+				//too few arguments
+				errno = EINVAL;
+				perror("assignto");
 				return founderror;
 			}
 			scanned[0].set_usage("assignto");
 			if (scanned[1].get_type()!="variable")
 			{
-				perror("invalid variable");
+				//invalid variable
+				errno = EINVAL;
+				perror("assignto");
 				return founderror;
 			}
 			scanned[1].set_usage("variable");
 			if (scanned[2].get_type()!="string" && scanned[2].get_type()!="variable" && scanned[2].get_type()!="word"){
-				perror("Commands must be in the form of a string, variable, or word.");
+				//Commands must be in the form of a string, variable, or word.
+				errno = EINVAL;
+				perror("assignto");
 				return founderror;
 			}
 			scanned[2].set_usage("cmd");
@@ -407,12 +425,16 @@ void programRun(vector<Token> parsed){
 	}
 	else if (parsed[0].get_usage()=="run"){
 		bool backgrounded = false;
-		pid_t forkResult = 0;
+		pid_t parent = getpid();
+
+		//take care of background forking
 		if(parsed.back().get_usage() == "<bg>"){
 			backgrounded = true;
 			parsed.pop_back();
-			forkResult = fork();
 		}
+
+		//it turns out we have to fork regardless of <bg>
+		pid_t forkResult = fork();
 	
 		int numArgs = parsed.size()-2;
 		char *arguments[numArgs+1];
@@ -426,8 +448,8 @@ void programRun(vector<Token> parsed){
 		}
 	    if(forkResult == 0){
 			
-
-	      	//I am the child process, or the parent without <bg>. Run the code
+	      	//I am the child process. Run the code
+	      	//TODO: check for <bg> and act accordingly
 		    if(parsed[1].get_token().c_str()[0] == '/'){
 				execv(parsed[1].get_token().c_str(),arguments);
 		    	//run directly, passing arguments
@@ -464,10 +486,17 @@ void programRun(vector<Token> parsed){
 					execv(correctPath.c_str(),arguments);
 				}
 				else {
-					perror("File not found");
+					//file not found
+					errno = ENOENT;
+					perror("run");
 				}
 		    	//search PATH for program of that name, run indirectly, passing arguments
 		    }
+
+	    } else {
+	    	//I am the parent process. 
+	    	//Wait for the child if <bg> is called or continue with prompt if <bg> is not called
+	    	//I'll also need to add the child process to the list of running processes
 	    }
 
 	}
