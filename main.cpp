@@ -452,11 +452,14 @@ void programRun(vector<Token> parsed){
 			
 	      	//I am the child process. Run the code
 	      	//TODO: check for <bg> and act accordingly
+
 		    if(parsed[1].get_token().c_str()[0] == '/'){
-				execv(parsed[1].get_token().c_str(),arguments);
 		    	//run directly, passing arguments
+				execv(parsed[1].get_token().c_str(),arguments);
+		    	
 		    } 
 			
+			//search Current Working Directory for program, run, passing arguments
 			else if (parsed[1].get_token().c_str()[0] == '.' && parsed[1].get_token().c_str()[1] == '/'){
 				char currentDirectory[512];
 				// program name in form of ./name
@@ -473,7 +476,8 @@ void programRun(vector<Token> parsed){
 				//const char * newDirectory = parsed[1].get_token().c_str();
 				
 			}
-		
+			
+			//search PATH for program of that name, run, passing arguments
 			else {
 				bool pathFound = false;
 				string correctPath = "";
@@ -492,13 +496,19 @@ void programRun(vector<Token> parsed){
 					errno = ENOENT;
 					perror("run");
 				}
-		    	//search PATH for program of that name, run indirectly, passing arguments
+		    	
 		    }
 
 	    } else {
 	    	//I am the parent process. 
 	    	//Wait for the child if <bg> is called or continue with prompt if <bg> is not called
 	    	//I'll also need to add the child process to the list of running processes
+	    	if(backgrounded == true){
+	    		//keep track of the process
+	    	}else{
+	    		//wait for the process to end
+	    		
+	    	}
 	    }
 
 	}
