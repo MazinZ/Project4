@@ -419,9 +419,10 @@ void programRun(vector<Token> parsed){
 				exists = true;
 				break;
 			}
-			if (!exists){
-				variableList.push_back(Variable(parsed[0].get_token(),parsed[2].get_token()));
-			}
+			
+		}
+		if (!exists){
+			variableList.push_back(Variable(parsed[0].get_token(),parsed[2].get_token()));
 		}
 	}
 	else if (parsed[0].get_usage()=="bye"){
