@@ -419,14 +419,20 @@ void programRun(vector<Token> parsed){
 			
 			else if (parsed[1].get_token().c_str()[0] == '.' && parsed[1].get_token().c_str()[1] == '/'){
 				char currentDirectory[512];
+				// program name in form of ./name
 				string programName = parsed[1].get_token();
-				programName.erase(0,2);
+				// remove the "." in front
+				programName.erase(0,1);
+				// copy the current working directory to the final path
 				strcpy(finalPath,getcwd(currentDirectory, sizeof(currentDirectory)));
+				// concatenate path above with the program name
 				strcat(finalPath,programName.c_str());
+				// copy arguments (not run or filename) into the arguments array
 				for (int i = 2; i < parsed.size(); i++){
 					strcpy(arguments[i-2],parsed[i].get_token().c_str());
 					//arguments[i-2] = parsed[i].get_token().c_str();
 				}
+				// execute using final path and arguments
 				execv(finalPath,arguments);
 				//const char * newDirectory = parsed[1].get_token().c_str();
 				
