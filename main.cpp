@@ -75,7 +75,7 @@ void showInfo(vector<Token> tokens);
 vector<Variable> variableList;
 bool showTokens = true;
 string promptToken = "sish >";
-//string PATH = "";
+string PATH = "/bin:/usr/bin";
 
 
 int main(){
@@ -344,7 +344,9 @@ bool parser(vector<Token> &scanned){
 }
 
 void programRun(vector<Token> parsed){
-	if (upper(parsed[0].get_type())=="CD"){
+	int parsedLength = scanned.size();
+
+	if (upper(parsed[0].get_usage())=="CD"){
 			char directory[1024];			
 			const char * newDirectory = parsed[1].get_token().c_str();
 			if(chdir(newDirectory) == 0) {
@@ -352,10 +354,10 @@ void programRun(vector<Token> parsed){
 			  }
 				
 	}
-	else if (upper(parsed[0].get_token())=="DEFPROMPT") {
+	else if (upper(parsed[0].get_usage())=="DEFPROMPT") {
 		promptToken = parsed[1].get_token();
 	}
-	else if (upper(parsed[0].get_type())=="WORD" && parsed[1].get_token()=="="){
+	else if (upper(parsed[0].get_usage())=="WORD" && parsed[1].get_usage()=="assignment"){
 		bool exists = false;
 		for (int i = 0; i < variableList.size(); i++){
 			if (parsed[0].get_token() == variableList[i].get_name()){
@@ -368,8 +370,11 @@ void programRun(vector<Token> parsed){
 			}
 		}
 	}
-	else if (upper(parsed[0].get_token())=="BYE"){
+	else if (upper(parsed[0].get_usage())=="BYE"){
 		exit(0);
+	}
+	else if (upper(parsed[0].get_usage())=="RUN"){
+		if(parsed.back().get_usage
 	}
 	
 	
