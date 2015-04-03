@@ -374,7 +374,12 @@ void programRun(vector<Token> parsed){
 		exit(0);
 	}
 	else if (parsed[0].get_usage()=="run"){
-		if(parsed.back().get_usage() == "<bg>"
+		bool backgrounded = false;
+
+		if(parsed.back().get_usage() == "<bg>"){
+			backgrounded = true;
+		}
+		
 	}
 	
 	
