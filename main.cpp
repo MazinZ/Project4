@@ -370,7 +370,7 @@ void programRun(vector<Token> parsed){
 			}
 		} else if (parsed[0].get_token() == "PATH")
 		{
-			
+
 		}
 
 		bool exists = false;
@@ -396,18 +396,18 @@ void programRun(vector<Token> parsed){
 			parsed.pop_back();
 			forkResult = fork();
 		}
-	}
-
-    if(forkResult == 0){
-      	//I am the child process, or the parent without <bg>. Run the code
-	        
-    }
-
-
-	}
 	
-	
-}
+	    if(forkResult == 0){
+	      	//I am the child process, or the parent without <bg>. Run the code
+		    if(parsed[1].get_token().c_str()[0] == '/'){
+		    	//run directly, passing arguments
+		    } else {
+		    	//search PATH for program of that name, run indirectly, passing arguments
+		    }
+	    }
+
+	}
+}	
 
 void showInfo(vector<Token> tokens){
 	if (showTokens){
