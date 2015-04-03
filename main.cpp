@@ -383,14 +383,16 @@ void programRun(vector<Token> parsed){
 			char directory[1024];			
 			const char * newDirectory = parsed[1].get_token().c_str();
 	}
-	if (upper(parsed[0].get_type())=="CD"){
+	if (upper(parsed[0].get_token())=="CD"){
 			char directory[1024];
 			const char * newDirectory = parsed[1].get_token().c_str();
 
 			
-			if(chdir(newDirectory) == 0) {
-				
+			if(chdir(newDirectory) != 0) {
+				perror("cd failed");
+
 			  }
+			
 				
 	}
 	else if (parsed[0].get_usage()=="defprompt") {
