@@ -410,10 +410,15 @@ void programRun(vector<Token> parsed){
 		
 
 	    if(forkResult == 0){
+			// copy arguments (not run or filename) into the arguments array
+			for (int i = 2; i < parsed.size(); i++){
+				strcpy(arguments[i-2],parsed[i].get_token().c_str());
+				//arguments[i-2] = parsed[i].get_token().c_str();
+			}
 
 	      	//I am the child process, or the parent without <bg>. Run the code
 		    if(parsed[1].get_token().c_str()[0] == '/'){
-				//exec()
+				execv(parsed[1].get_token().c_str(),arguments);
 		    	//run directly, passing arguments
 		    } 
 			
@@ -427,11 +432,7 @@ void programRun(vector<Token> parsed){
 				strcpy(finalPath,getcwd(currentDirectory, sizeof(currentDirectory)));
 				// concatenate path above with the program name
 				strcat(finalPath,programName.c_str());
-				// copy arguments (not run or filename) into the arguments array
-				for (int i = 2; i < parsed.size(); i++){
-					strcpy(arguments[i-2],parsed[i].get_token().c_str());
-					//arguments[i-2] = parsed[i].get_token().c_str();
-				}
+				
 				// execute using final path and arguments
 				execv(finalPath,arguments);
 				//const char * newDirectory = parsed[1].get_token().c_str();
