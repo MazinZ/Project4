@@ -62,7 +62,6 @@ struct Variable{
 		string name;
 		string value;
 		
-	
 };
 
 string typeGet(string token);
@@ -73,15 +72,18 @@ void programRun(vector<Token> parsed);
 void showInfo(vector<Token> tokens);
 
 vector<Variable> variableList;
+vector<string> PATH;
 bool showTokens = true;
 string promptToken = "sish >";
-string PATH = "/bin:/usr/bin";
-
 
 int main(){
 	string command;
 	vector<Token> commandLine;
 	bool curLineError = false;
+
+	//take care of PATH
+	PATH.push_back("/bin");
+	PATH.push_back("/usr/bin");
 	
 	//initial prompt
 	cout << promptToken;
@@ -357,7 +359,20 @@ void programRun(vector<Token> parsed){
 	else if (parsed[0].get_usage()=="defprompt") {
 		promptToken = parsed[1].get_token();
 	}
-	else if (parsed[0].get_usage()=="word" && parsed[1].get_usage()=="assignment"){
+	else if (parsed[0].get_usage()=="variable" && parsed[1].get_usage()=="assignment"){
+
+		if (parsed[0].get_token() == "ShowTokens")
+		{
+			if(parsed[2].get_token() == "1"){
+				showTokens = true;
+			} else {
+				showTokens = false;
+			}
+		} else if (parsed[0].get_token() == "PATH")
+		{
+			
+		}
+
 		bool exists = false;
 		for (int i = 0; i < variableList.size(); i++){
 			if (parsed[0].get_token() == variableList[i].get_name()){
