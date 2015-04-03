@@ -344,7 +344,7 @@ bool parser(vector<Token> &scanned){
 }
 
 void programRun(vector<Token> parsed){
-	int parsedLength = scanned.size();
+	int parsedLength = parsed.size();
 
 	if (parsed[0].get_usage()=="cd"){
 			char directory[1024];			
@@ -375,11 +375,20 @@ void programRun(vector<Token> parsed){
 	}
 	else if (parsed[0].get_usage()=="run"){
 		bool backgrounded = false;
-
+		pid_t forkResult = 0;
 		if(parsed.back().get_usage() == "<bg>"){
 			backgrounded = true;
+			parsed.pop_back();
+			forkResult = fork();
 		}
-		
+	}
+
+    if(forkResult == 0){
+      	//I am the child process, or the parent without <bg>. Run the code
+	        
+    }
+
+
 	}
 	
 	
