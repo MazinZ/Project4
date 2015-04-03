@@ -1,11 +1,13 @@
-#include <iostream>
-#include <vector>
-#include <string>
-#include <algorithm>
-#include <iomanip>
-#include <sstream>
 #include <stdlib.h>
 #include <unistd.h>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <cstring>
+#include <vector>
+#include <algorithm>
+#include <iomanip>
 #include <fstream>
 #include <errno.h>
 using namespace std;
@@ -366,7 +368,7 @@ bool parser(vector<Token> &scanned){
 
 bool fileExists(string filepath)
 {
-	ifstream ifile(filepath);
+	ifstream ifile(filepath.c_str());
 	if (ifile) 
 		return true;
 	else {
