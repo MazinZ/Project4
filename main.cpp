@@ -6,6 +6,7 @@
 #include <sstream>
 #include <stdlib.h>
 #include <unistd.h>
+#include <fstream>
 using namespace std;
 
 struct Token{
@@ -345,6 +346,16 @@ bool parser(vector<Token> &scanned){
 	
 }
 
+bool fileExists(string filepath)
+{
+	ifstream ifile(filepath);
+	if (ifile) 
+		return true;
+	else {
+		return false;
+	}
+}
+
 void programRun(vector<Token> parsed){
 	int parsedLength = parsed.size();
 
@@ -408,13 +419,13 @@ void programRun(vector<Token> parsed){
 		arguments[numArgs] = NULL;
 		char finalPath[1024];
 		
-
+		// copy arguments (not run or filename) into the arguments array
+		for (int i = 2; i < parsed.size(); i++){
+			strcpy(arguments[i-2],parsed[i].get_token().c_str());
+			//arguments[i-2] = parsed[i].get_token().c_str();
+		}
 	    if(forkResult == 0){
-			// copy arguments (not run or filename) into the arguments array
-			for (int i = 2; i < parsed.size(); i++){
-				strcpy(arguments[i-2],parsed[i].get_token().c_str());
-				//arguments[i-2] = parsed[i].get_token().c_str();
-			}
+			
 
 	      	//I am the child process, or the parent without <bg>. Run the code
 		    if(parsed[1].get_token().c_str()[0] == '/'){
@@ -440,6 +451,21 @@ void programRun(vector<Token> parsed){
 			}
 		
 			else {
+				bool pathFound = false;
+				string correctPath = "";
+				for (int i = 0; i<PATH.size(); i++){
+					string correctPath = PATH[i]+parsed[1].get_token();
+					if(fileExists(correctPath)){
+						pathFound = true;
+						break;
+					}
+				}
+				if (pathFound){
+					execv(correctPath.c_str(),arguments);
+				}
+				else {
+					perror("File not found");
+				}
 		    	//search PATH for program of that name, run indirectly, passing arguments
 		    }
 	    }
