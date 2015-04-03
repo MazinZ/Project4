@@ -346,7 +346,7 @@ bool parser(vector<Token> &scanned){
 void programRun(vector<Token> parsed){
 	int parsedLength = scanned.size();
 
-	if (upper(parsed[0].get_usage())=="CD"){
+	if (parsed[0].get_usage()=="cd"){
 			char directory[1024];			
 			const char * newDirectory = parsed[1].get_token().c_str();
 			if(chdir(newDirectory) == 0) {
@@ -354,10 +354,10 @@ void programRun(vector<Token> parsed){
 			  }
 				
 	}
-	else if (upper(parsed[0].get_usage())=="DEFPROMPT") {
+	else if (parsed[0].get_usage()=="defprompt") {
 		promptToken = parsed[1].get_token();
 	}
-	else if (upper(parsed[0].get_usage())=="WORD" && parsed[1].get_usage()=="assignment"){
+	else if (parsed[0].get_usage()=="word" && parsed[1].get_usage()=="assignment"){
 		bool exists = false;
 		for (int i = 0; i < variableList.size(); i++){
 			if (parsed[0].get_token() == variableList[i].get_name()){
@@ -370,11 +370,11 @@ void programRun(vector<Token> parsed){
 			}
 		}
 	}
-	else if (upper(parsed[0].get_usage())=="BYE"){
+	else if (parsed[0].get_usage()=="bye"){
 		exit(0);
 	}
-	else if (upper(parsed[0].get_usage())=="RUN"){
-		if(parsed.back().get_usage
+	else if (parsed[0].get_usage()=="run"){
+		if(parsed.back().get_usage() == "<bg>"
 	}
 	
 	
