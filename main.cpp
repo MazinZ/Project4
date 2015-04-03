@@ -351,6 +351,12 @@ void programRun(vector<Token> parsed){
 	if (parsed[0].get_usage()=="cd"){
 			char directory[1024];			
 			const char * newDirectory = parsed[1].get_token().c_str();
+	}
+	if (upper(parsed[0].get_type())=="CD"){
+			char directory[1024];
+			const char * newDirectory = parsed[1].get_token().c_str();
+
+			
 			if(chdir(newDirectory) == 0) {
 				
 			  }
@@ -397,11 +403,36 @@ void programRun(vector<Token> parsed){
 			forkResult = fork();
 		}
 	
+		int numArgs = parsed.size()-2;
+		char *arguments[numArgs+1];
+		arguments[numArgs] = NULL;
+		char finalPath[1024];
+		
+
 	    if(forkResult == 0){
+
 	      	//I am the child process, or the parent without <bg>. Run the code
 		    if(parsed[1].get_token().c_str()[0] == '/'){
+				//exec()
 		    	//run directly, passing arguments
-		    } else {
+		    } 
+			
+			else if (parsed[1].get_token().c_str()[0] == '.' && parsed[1].get_token().c_str()[1] == '/'){
+				char currentDirectory[512];
+				string programName = parsed[1].get_token();
+				programName.erase(0,2);
+				strcpy(finalPath,getcwd(currentDirectory, sizeof(currentDirectory)));
+				strcat(finalPath,programName.c_str());
+				for (int i = 2; i < parsed.size(); i++){
+					strcpy(arguments[i-2],parsed[i].get_token().c_str());
+					//arguments[i-2] = parsed[i].get_token().c_str();
+				}
+				execv(finalPath,arguments);
+				//const char * newDirectory = parsed[1].get_token().c_str();
+				
+			}
+		
+			else {
 		    	//search PATH for program of that name, run indirectly, passing arguments
 		    }
 	    }
