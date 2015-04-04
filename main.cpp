@@ -7,6 +7,7 @@
 #include <cstring>
 #include <vector>
 #include <algorithm>
+#include <sys/wait.h>
 #include <iomanip>
 #include <fstream>
 #include <errno.h>
@@ -82,6 +83,8 @@ vector<Variable> variableList;
 vector<string> PATH;
 bool showTokens = true;
 string promptToken = "sish >";
+//not needed for now, but might be useful later
+int childStatusCode = 0;
 
 int main(){
 	string command;
@@ -531,10 +534,10 @@ void programRun(vector<Token> parsed){
 	    	//Wait for the child if <bg> is called or continue with prompt if <bg> is not called
 	    	//I'll also need to add the child process to the list of running processes
 	    	if(backgrounded == true){
-	    		//keep track of the process
+	    		//TODO: keep track of the process
 	    	}else{
 	    		//wait for the process to end
-	    		
+	    		waitpid(forkResult, &childStatusCode, 0);
 	    	}
 	    }*/
 
