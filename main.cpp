@@ -74,6 +74,7 @@ vector<Token> scanner(string s);
 bool parser(vector<Token> &scanned);
 void programRun(vector<Token> parsed);
 void showInfo(vector<Token> tokens);
+string variableValue(string variable);
 
 vector<Variable> variableList;
 vector<string> PATH;
@@ -378,19 +379,29 @@ bool fileExists(string filepath)
 
 void programRun(vector<Token> parsed){
 	int parsedLength = parsed.size();
+	const char * newDirectory;
 
 	if (parsed[0].get_usage()=="cd"){
-			char directory[1024];			
-			const char * newDirectory = parsed[1].get_token().c_str();
-			
-		if(chdir(newDirectory) != 0) {
-			perror("cd failed");
-
+			char directory[1024];	
+			if (parsed[1].get_token().c_str()[0] == '$'){
+				newDirectory = variableValue(parsed[1].get_token()).c_str();
+				//TODO: Check if newDirectory is equal to "". If so, the variable supplied does not exist.
 			}
+			else
+				newDirectory = parsed[1].get_token().c_str();
+			
+		
+		if(chdir(newDirectory) != 0)
+			perror("cd failed");
 	}
 	
 	else if (parsed[0].get_usage()=="defprompt") {
-		promptToken = parsed[1].get_token();
+		if (parsed[1].get_token().c_str()[0] == '$'){
+			promptToken = variableValue(parsed[1].get_token());
+			//TODO: Check if promptToken is equal to "". If so, the variable supplied does not exist.
+		}
+		else
+			promptToken = parsed[1].get_token();
 	}
 	else if (parsed[0].get_usage()=="variable" && parsed[1].get_usage()=="assignment"){
 
