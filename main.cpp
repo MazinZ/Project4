@@ -340,6 +340,15 @@ bool parser(vector<Token> &scanned){
 			}
 			scanned[2].set_usage("cmd");
 		}
+		if (upper(scanned[0].get_token())== "LISTPROCS")
+		{
+			if (scannedLength != 1){
+				errno = E2BIG;
+				perror("listprocs");
+				return founderror;
+			}
+			scanned[0].set_usage("listprocs");
+		}
 
 		return !founderror;
 	}
