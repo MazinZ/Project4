@@ -75,6 +75,7 @@ bool parser(vector<Token> &scanned);
 void programRun(vector<Token> parsed);
 void showInfo(vector<Token> tokens);
 string variableValue(string variable);
+bool execute(const char *program, char *const *arguments, bool background);
 
 vector<Variable> variableList;
 vector<string> PATH;
@@ -435,7 +436,6 @@ void programRun(vector<Token> parsed){
 	}
 	else if (parsed[0].get_usage()=="run"){
 		bool backgrounded = false;
-		pid_t parent = getpid();
 
 		//take care of background forking
 		if(parsed.back().get_usage() == "<bg>"){
@@ -444,7 +444,6 @@ void programRun(vector<Token> parsed){
 		}
 
 		//it turns out we have to fork regardless of <bg>
-		pid_t forkResult = fork();
 	
 		int numArgs = parsed.size()-2;
 		char *arguments[numArgs+1];
@@ -456,14 +455,14 @@ void programRun(vector<Token> parsed){
 			strcpy(arguments[i-2],parsed[i].get_token().c_str());
 			//arguments[i-2] = parsed[i].get_token().c_str();
 		}
-	    if(forkResult == 0){
+	   // if(forkResult == 0){
 			
 	      	//I am the child process. Run the code
 	      	//TODO: check for <bg> and act accordingly
 
 		    if(parsed[1].get_token().c_str()[0] == '/'){
 		    	//run directly, passing arguments
-				execv(parsed[1].get_token().c_str(),arguments);
+				execute(parsed[1].get_token().c_str(),arguments,false);
 		    	
 		    } 
 			
@@ -480,7 +479,7 @@ void programRun(vector<Token> parsed){
 				strcat(finalPath,programName.c_str());
 				
 				// execute using final path and arguments
-				execv(finalPath,arguments);
+				execute(finalPath,arguments, false);
 				//const char * newDirectory = parsed[1].get_token().c_str();
 				
 			}
@@ -497,7 +496,7 @@ void programRun(vector<Token> parsed){
 					}
 				}
 				if (pathFound){
-					execv(correctPath.c_str(),arguments);
+					execute(correctPath.c_str(),arguments, false);
 				}
 				else {
 					//file not found
@@ -507,7 +506,9 @@ void programRun(vector<Token> parsed){
 		    	
 		    }
 
-	    } else {
+	    /* Goes with the fork==0 line above} 
+	
+		else {
 	    	//I am the parent process. 
 	    	//Wait for the child if <bg> is called or continue with prompt if <bg> is not called
 	    	//I'll also need to add the child process to the list of running processes
@@ -517,7 +518,7 @@ void programRun(vector<Token> parsed){
 	    		//wait for the process to end
 	    		
 	    	}
-	    }
+	    }*/
 
 	}
 }	
@@ -544,5 +545,25 @@ string variableValue(string variable) {
 			return variableList[i].get_value();
 	}
 	return "";
+}
+
+bool execute(const char *program, char *const *arguments, bool background) {
+	pid_t pid;
+	int state;
+	bool failed = true;
+	
+	if ((pid = fork()) < 0)      
+				return failed;
+	else if (pid == 0) {          /* child process       */
+		if (execv(program, arguments) < 0)     /* execute  */
+				return failed;
+		}
+	else {                                  
+		while (wait(&state) != pid);     /* parent waits for completion (I guess we don't execute this if bg is enabled?)  */
+								 
+			 
+	}
+	return !failed;
+	
 }
 
