@@ -446,19 +446,15 @@ void programRun(vector<Token> parsed){
 
 		//it turns out we have to fork regardless of <bg>
 	
-		int numArgs = parsed.size()-2;
+		int numArgs = parsed.size()-1;
 		char *arguments[numArgs+1];
 		arguments[numArgs] = NULL;
 		char finalPath[1024];
 		
 		// copy arguments (not run or filename) into the arguments array
-		for (int i = 2; i < parsed.size(); i++){
-			char *converted = convertToCharStar(parsed[i].get_token());
-			arguments[i-2] = converted;
-			free(converted);
-
-			//arguments[i-2]=convertToCharStar(parsed[i].get_token());
-			//arguments[i-2] = parsed[i].get_token().c_str();
+		for (int i = 1; i < parsed.size(); i++){
+			char *converted = convertToCharStar(parsed[i+1].get_token());
+			arguments[i] = converted;
 		}
 	   // if(forkResult == 0){
 			
@@ -467,7 +463,13 @@ void programRun(vector<Token> parsed){
 
 		    if(parsed[1].get_token().c_str()[0] == '/'){
 		    	//run directly, passing arguments
-				execute(parsed[1].get_token().c_str(),arguments,false);
+		
+		
+			for (int i = 2; i < parsed.size(); i++){
+					char *converted = convertToCharStar(parsed[i].get_token());
+					arguments[i] = converted;
+				}
+				execute(parsed[2].get_token().c_str(),arguments,false);
 		    	
 		    } 
 			
@@ -483,6 +485,12 @@ void programRun(vector<Token> parsed){
 				// concatenate path above with the program name
 				strcat(finalPath,programName.c_str());
 				
+				for (int i = 2; i < parsed.size(); i++){
+					char *converted = convertToCharStar(parsed[i].get_token());
+					arguments[i] = converted;
+				}
+
+				
 				// execute using final path and arguments
 				execute(finalPath,arguments, false);
 				//const char * newDirectory = parsed[1].get_token().c_str();
@@ -494,13 +502,16 @@ void programRun(vector<Token> parsed){
 				bool pathFound = false;
 				string correctPath = "";
 				for (int i = 0; i<PATH.size(); i++){
-					string correctPath = PATH[i]+"/"+parsed[1].get_token();
+					correctPath = PATH[i]+"/"+parsed[1].get_token();
 					if(fileExists(correctPath)){
+						
 						pathFound = true;
 						break;
 					}
 				}
 				if (pathFound){
+					arguments[0]=convertToCharStar(correctPath.c_str());
+					arguments[numArgs] = NULL;					
 					execute(correctPath.c_str(),arguments, false);
 				}
 				else {
