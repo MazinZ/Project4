@@ -76,6 +76,7 @@ void programRun(vector<Token> parsed);
 void showInfo(vector<Token> tokens);
 string variableValue(string variable);
 bool execute(const char *program, char *const *arguments, bool background);
+char * convertToCharStar(string argument);
 
 vector<Variable> variableList;
 vector<string> PATH;
@@ -452,7 +453,11 @@ void programRun(vector<Token> parsed){
 		
 		// copy arguments (not run or filename) into the arguments array
 		for (int i = 2; i < parsed.size(); i++){
-			strcpy(arguments[i-2],parsed[i].get_token().c_str());
+			char *converted = convertToCharStar(parsed[i].get_token());
+			arguments[i-2] = converted;
+			free(converted);
+
+			//arguments[i-2]=convertToCharStar(parsed[i].get_token());
 			//arguments[i-2] = parsed[i].get_token().c_str();
 		}
 	   // if(forkResult == 0){
@@ -565,5 +570,12 @@ bool execute(const char *program, char *const *arguments, bool background) {
 	}
 	return !failed;
 	
+}
+
+char * convertToCharStar(string argument){
+	//char returnval[(argument).length()+1];
+	char* returnval = (char *)malloc(argument.length()+1);
+	strcpy(returnval, argument.c_str());
+	return returnval;
 }
 
