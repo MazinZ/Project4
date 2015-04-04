@@ -163,7 +163,7 @@ vector<Token> scanner(string s) {
 
 string typeGet(string token){
 	bool validVariable = true;
-	if (upper(token) == "DEFPROMPT" || upper(token) == "CD" || upper(token) == "LISTJOBS" || upper(token) ==
+	if (upper(token) == "DEFPROMPT" || upper(token) == "CD" || upper(token) == "LISTPROCS" || upper(token) ==
 		"BYE" || upper(token) == "RUN" || upper(token) == "ASSIGNTO" || upper(token) == "<BG>") {
 		return "keyword";
 	}
@@ -339,15 +339,6 @@ bool parser(vector<Token> &scanned){
 				return founderror;
 			}
 			scanned[2].set_usage("cmd");
-		}
-		if (upper(scanned[0].get_token())== "LISTPROCS")
-		{
-			if (scannedLength != 1){
-				errno = E2BIG;
-				perror("listprocs");
-				return founderror;
-			}
-			scanned[0].set_usage("listprocs");
 		}
 
 		return !founderror;
