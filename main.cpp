@@ -494,7 +494,7 @@ void programRun(vector<Token> parsed){
 				bool pathFound = false;
 				string correctPath = "";
 				for (int i = 0; i<PATH.size(); i++){
-					string correctPath = PATH[i]+parsed[1].get_token();
+					string correctPath = PATH[i]+"/"+parsed[1].get_token();
 					if(fileExists(correctPath)){
 						pathFound = true;
 						break;
