@@ -382,19 +382,13 @@ void programRun(vector<Token> parsed){
 	if (parsed[0].get_usage()=="cd"){
 			char directory[1024];			
 			const char * newDirectory = parsed[1].get_token().c_str();
-	}
-	if (upper(parsed[0].get_token())=="CD"){
-			char directory[1024];
-			const char * newDirectory = parsed[1].get_token().c_str();
-
 			
-			if(chdir(newDirectory) != 0) {
-				perror("cd failed");
+		if(chdir(newDirectory) != 0) {
+			perror("cd failed");
 
-			  }
-			
-				
+			}
 	}
+	
 	else if (parsed[0].get_usage()=="defprompt") {
 		promptToken = parsed[1].get_token();
 	}
@@ -528,5 +522,16 @@ void showInfo(vector<Token> tokens){
  			cout << setw(15) << left << tokens[i].get_usage() << endl;
  		}
  	}
+}
+
+// When a parameter with a $ in front is detected, it is passed to this function
+// and the value of the variable is returned.
+string variableValue(string variable) {
+	string variableName = variable.erase(0,1);
+	for (int i = 0; i < variableList.size(); i++){
+		if (variableList[i].get_name()==variableName)
+			return variableList[i].get_value();
+	}
+	return "";
 }
 
