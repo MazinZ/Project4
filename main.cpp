@@ -469,6 +469,7 @@ void programRun(vector<Token> parsed){
 					char *converted = convertToCharStar(parsed[i].get_token());
 					arguments[i] = converted;
 				}
+				arguments[numArgs] = NULL;
 				execute(parsed[2].get_token().c_str(),arguments,false);
 		    	
 		    } 
@@ -488,9 +489,10 @@ void programRun(vector<Token> parsed){
 				for (int i = 2; i < parsed.size(); i++){
 					char *converted = convertToCharStar(parsed[i].get_token());
 					arguments[i] = converted;
+					
 				}
+				arguments[numArgs] = NULL;
 
-				
 				// execute using final path and arguments
 				execute(finalPath,arguments, false);
 				//const char * newDirectory = parsed[1].get_token().c_str();
