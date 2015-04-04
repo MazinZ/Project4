@@ -216,25 +216,8 @@ bool parser(vector<Token> &scanned){
 		}
 		return !founderror;
 	}
-	
-	// if the first token is a word
-	if (scanned[0].get_type()== "word") {
 
-		// variable form [variable, =, value]
-		if(scanned[1].get_token()== "="){
-			// if there aren't exactly 3 tokens (variable, assignment, value), it's an error
-			if (scannedLength != 3){
-				return founderror;
-			}
-
-			scanned[0].set_usage("variable");
-			scanned[1].set_usage("assignment");
-			scanned[2].set_usage("variableDef");
-		}
-		return !founderror;
-	}
-
-	// if the first token is a word
+	// if the first token is a keyword
 	if (scanned[0].get_type()== "keyword") {
 		if (upper(scanned[0].get_token())== "DEFPROMPT")
 		{
@@ -252,7 +235,7 @@ bool parser(vector<Token> &scanned){
 			scanned[0].set_usage("defprompt");
 			scanned[1].set_usage("prompt");
 			//promptToken = scanned[1].get_token();
-
+			return !founderror;
 		}
 		if (upper(scanned[0].get_token())== "CD")
 		{
@@ -269,7 +252,7 @@ bool parser(vector<Token> &scanned){
 
 			scanned[0].set_usage("cd");
 			scanned[1].set_usage("directoryName");
-
+			return !founderror;
 		}
 		if (upper(scanned[0].get_token())== "LISTPROCS")
 		{
@@ -279,6 +262,7 @@ bool parser(vector<Token> &scanned){
 				return founderror;
 			}
 			scanned[0].set_usage("listprocs");
+			return !founderror;
 		}
 		if (upper(scanned[0].get_token())== "BYE")
 		{
@@ -288,6 +272,7 @@ bool parser(vector<Token> &scanned){
 				return founderror;
 			}
 			scanned[0].set_usage("bye");
+			return !founderror;
 		}
 		if (upper(scanned[0].get_token())== "RUN")
 		{
@@ -297,7 +282,6 @@ bool parser(vector<Token> &scanned){
 				return founderror;
 			}
 			scanned[0].set_usage("run");
-			//TODO: make sure cmd is a valid command
 			scanned[1].set_usage("cmd");
 			string parameterCount;
 			
@@ -313,7 +297,7 @@ bool parser(vector<Token> &scanned){
 				//mark the ending token usage as <bg>
 				scanned[scannedLength-1].set_usage("<bg>"); 
 			}
-
+			return !founderror;
 		}
 		if (upper(scanned[0].get_token())== "ASSIGNTO")
 		{
@@ -339,37 +323,34 @@ bool parser(vector<Token> &scanned){
 				return founderror;
 			}
 			scanned[2].set_usage("cmd");
+			return !founderror;
+		}
+    }
+
+	// variable form [variable, =, value]
+	if(scanned[0].get_type()== "word" && scannedLength > 1 && scanned[1].get_token()== "="){
+		// if there aren't exactly 3 tokens (variable, assignment, value), it's an error
+		if (scannedLength != 3){
+			errno = EINVAL;
+			perror("sish variable assignment");
+			return founderror;
 		}
 
+		scanned[0].set_usage("variable");
+		scanned[1].set_usage("assignment");
+		scanned[2].set_usage("variableDef");
 		return !founderror;
 	}
-	
-	if (scanned[0].get_token()=="cd"){
-		// we don't need to handle cd by itself, so return error
-		if (scannedLength==1)
-			return founderror;
-		// a variable can only have a value that is a word or a string, otherwise return error
-		if (scanned[1].get_type()!= "word" || scanned[1].get_type()!="string")
-			return founderror;
-		// listprocs and bye must be alone on the line
-		if ((scanned[0].get_token() == "listprocs" || scanned[0].get_token() == "bye") && scannedLength>1)
-			return founderror;
-	}
-	
-	if (scanned[0].get_token() == "run"){
-		// run has to at least have two tokens, run and a command
-		// a command can only be a string, variable or word. Otherwise return an error.
 
-		if (scanned[0].get_token() == "assignto"){
-			// <bg> option isn't allowed with assignto.
-			if (scannedLength<3 || scanned.back().get_token() == "<bg>")
-				return founderror;
-		}
-	
+	//if we reach this point, we have no idea how to parse the command. Set all usages to anyText, show an error
+	for (int i = 0; i < scannedLength; i++)
+	{
+		scanned[i].set_usage("anyText");
 	}
-	// no error found
-	return !founderror;
-	
+	errno = ENOSYS;
+	perror("sish");
+	return founderror;
+		
 }
 
 bool fileExists(string filepath)
