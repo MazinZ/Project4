@@ -78,6 +78,7 @@ void showInfo(vector<Token> tokens);
 string variableValue(string variable);
 bool execute(const char *program, char *const *arguments, bool background);
 char * convertToCharStar(string argument);
+vector<string> pathScanner(string s);
 
 vector<Variable> variableList;
 vector<string> PATH;
@@ -400,6 +401,8 @@ void programRun(vector<Token> parsed){
 			}
 		} else if (parsed[0].get_token() == "PATH")
 		{
+			PATH.clear();
+			PATH = pathScanner(parsed[2]);
 
 		}
 
