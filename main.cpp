@@ -449,18 +449,30 @@ void programRun(vector<Token> parsed){
 		int numArgs = parsed.size()-1;
 		char *arguments[numArgs+1];
 		char finalPath[1024];
-		
+		char *converted;
 		// copy arguments (not run or filename) into the arguments array
 		for (int i = 1; i < parsed.size(); i++){
-			char *converted = convertToCharStar(parsed[i+1].get_token());
+			if (parsed[i+1].get_token().c_str()[0]=='$'){
+				converted = convertToCharStar(variableValue(parsed[i+1].get_token()));
+			}
+			else
+				converted = convertToCharStar(parsed[i+1].get_token());
+			
 			arguments[i] = converted;
 		}
-		arguments[0] = convertToCharStar(parsed[1].get_token());
+		
+		////////////////// TODO: Fix Bug here, command isn't getting replaced by its variable value. ////////
+		if (parsed[1].get_token().c_str()[0]=='$'){
+			arguments[0] = convertToCharStar(variableValue(parsed[1].get_token()));
+			cout << arguments[0];
+		}
+		else {
+			arguments[0] = convertToCharStar(parsed[1].get_token());
+		}
+		
 		arguments[numArgs] = NULL;
 
-	   // if(forkResult == 0){
-			
-	      	//I am the child process. Run the code
+
 	      	//TODO: check for <bg> and act accordingly
 
 		    if(parsed[1].get_token().c_str()[0] == '/'){
@@ -527,20 +539,6 @@ void programRun(vector<Token> parsed){
 				}
 		    	
 		    }
-
-	    /* Goes with the fork==0 line above} 
-	
-		else {
-	    	//I am the parent process. 
-	    	//Wait for the child if <bg> is called or continue with prompt if <bg> is not called
-	    	//I'll also need to add the child process to the list of running processes
-	    	if(backgrounded == true){
-	    		//TODO: keep track of the process
-	    	}else{
-	    		//wait for the process to end
-	    		waitpid(forkResult, &childStatusCode, 0);
-	    	}
-	    }*/
 
 	}
 	
