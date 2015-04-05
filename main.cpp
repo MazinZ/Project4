@@ -402,7 +402,7 @@ void programRun(vector<Token> parsed){
 		} else if (parsed[0].get_token() == "PATH")
 		{
 			PATH.clear();
-			PATH = pathScanner(parsed[2]);
+			PATH = pathScanner(parsed[2].get_token());
 
 		}
 
