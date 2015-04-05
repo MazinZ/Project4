@@ -549,13 +549,13 @@ void programRun(vector<Token> parsed){
 		arguments[0] = convertToCharStar(parsed[2].get_token());
 		arguments[numArgs] = NULL;
 
-	 		if(parsed[1].get_token().c_str()[0] == '/'){
+	 		if(parsed[2].get_token().c_str()[0] == '/'){
 					success = true;
 					assigntoExecute(parsed[2].get_token().c_str(),arguments);
 		    } 
 			
 			//search Current Working Directory for program, run, passing arguments
-			else if (parsed[2].get_token().c_str()[0] == '.' && parsed[1].get_token().c_str()[2] == '/'){
+			else if (parsed[2].get_token().c_str()[0] == '.' && parsed[2].get_token().c_str()[1] == '/'){
 				char currentDirectory[512];
 				string programName = parsed[2].get_token();
 				programName.erase(0,1);
@@ -598,7 +598,7 @@ void programRun(vector<Token> parsed){
 			}
 		}
 		else 
-			variableList.push_back(Variable(parsed[1].get_token(), readDataFile()));{
+			variableList.push_back(Variable(parsed[1].get_token().erase(0,1), readDataFile()));{
 				remove("./tmpdata");
 			}
 				
@@ -722,6 +722,7 @@ string readDataFile(){
 }
 
 bool variableExists(string variableName){
+	variableName.erase(0,1);
 	for (int i = 0; i < variableList.size(); i++){
 		if (variableName == variableList[i].get_name()){
 			return true;
