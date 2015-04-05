@@ -82,7 +82,7 @@ char * convertToCharStar(string argument);
 vector<string> pathScanner(string s);
 bool assigntoExecute(const char *program, char *const *arguments);
 bool variableExists(string variableName);
-string readfile();
+string readDataFile();
 
 
 vector<Variable> variableList;
@@ -588,24 +588,25 @@ void programRun(vector<Token> parsed){
 				}
 		    	
 		    }
-
-	  
-	}
-	
+		
 	if (success){
-		if (variableExists(parsed[1].get_token()) {
+		if (variableExists(parsed[1].get_token())) {
 			for (int i = 0; i < variableList.size(); i++){
-				if (variableName == variableList[i].get_name())
-					variableList[i].set_value(readfile());
+				if (parsed[1].get_token() == variableList[i].get_name())
+					variableList[i].set_value(readDataFile());
 					remove("./tmpdata");
 			}
 		}
 		else 
-			variableList.push_back(Variable(parsed[1].get_token(), readfile()));{
+			variableList.push_back(Variable(parsed[1].get_token(), readDataFile()));{
 				remove("./tmpdata");
 			}
 				
-			}
+		}
+	  
+	}
+	
+	
 		
 		
 	}
@@ -707,7 +708,7 @@ bool assigntoExecute(const char *program, char *const *arguments){
 	return !failed;
 }
 
-string readFile(){
+string readDataFile(){
 	stringstream fileContents;
 	ifstream stream("./tmpdata");
 	if(stream.is_open()){
@@ -717,6 +718,7 @@ string readFile(){
 	stream.close();
 	return fileContents.str();
 	}
+	return "";
 }
 
 bool variableExists(string variableName){
@@ -724,6 +726,7 @@ bool variableExists(string variableName){
 		if (variableName == variableList[i].get_name()){
 			return true;
 	}
-	return false;
+}
+return false;
 }
 
