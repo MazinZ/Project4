@@ -451,7 +451,7 @@ void programRun(vector<Token> parsed){
 		char finalPath[1024];
 		char *converted;
 		// copy arguments (not run or filename) into the arguments array
-		for (int i = 1; i < parsed.size(); i++){
+		for (int i = 1; i < parsed.size()-1; i++){
 			if (parsed[i+1].get_token().c_str()[0]=='$'){
 				converted = convertToCharStar(variableValue(parsed[i+1].get_token()));
 			}
@@ -460,11 +460,9 @@ void programRun(vector<Token> parsed){
 			
 			arguments[i] = converted;
 		}
-		
 		////////////////// TODO: Fix Bug here, command isn't getting replaced by its variable value. ////////
 		if (parsed[1].get_token().c_str()[0]=='$'){
 			arguments[0] = convertToCharStar(variableValue(parsed[1].get_token()));
-			cout << arguments[0];
 		}
 		else {
 			arguments[0] = convertToCharStar(parsed[1].get_token());
@@ -552,8 +550,19 @@ void programRun(vector<Token> parsed){
 			char *converted = convertToCharStar(parsed[i+2].get_token());
 			arguments[i] = converted;
 		}
+		
+		for (int i = 1; i < numArgs; i++){
+			if (arguments[i][0] == '$')
+				arguments[i] = convertToCharStar(variableValue(arguments[i]));
+		}
+		
 		arguments[0] = convertToCharStar(parsed[2].get_token());
 		arguments[numArgs] = NULL;
+		
+		for (int i = 1; i < numArgs-1; i++){
+			if (arguments[i][0] == '$')
+				arguments[i] = convertToCharStar(variableValue(arguments[i]));
+		}
 
 	 		if(parsed[2].get_token().c_str()[0] == '/'){
 					success = true;
@@ -590,6 +599,11 @@ void programRun(vector<Token> parsed){
 					for (int i = 2; i < parsed.size(); i++){
 						char *converted = convertToCharStar(parsed[i+1].get_token());
 						arguments[i] = converted;
+					}
+					
+					for (int i = 1; i < numArgs-1; i++){
+						if (arguments[i][0] == '$')
+							arguments[i] = convertToCharStar(variableValue(arguments[i]));
 					}
 					arguments[0] = convertToCharStar(parsed[2].get_token());
 					arguments[numArgs-1] = NULL;
@@ -710,6 +724,7 @@ bool assigntoExecute(const char *program, char *const *arguments){
 	char *filename;
 	strcpy(filename,file.c_str());
 	bool failed = true;
+	
 	
 	if ((pid = fork()) < 0)      
 				return failed;
