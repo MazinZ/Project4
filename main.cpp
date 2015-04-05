@@ -81,6 +81,9 @@ bool execute(const char *program, char *const *arguments, bool background);
 char * convertToCharStar(string argument);
 vector<string> pathScanner(string s);
 bool assigntoExecute(const char *program, char *const *arguments);
+bool variableExists(string variableName);
+string readfile();
+
 
 vector<Variable> variableList;
 vector<string> PATH;
@@ -537,6 +540,7 @@ void programRun(vector<Token> parsed){
 		int numArgs = parsed.size()-1;
 		char *arguments[numArgs+1];
 		char finalPath[1024];
+		bool success = false;
 		
 		for (int i = 1; i < parsed.size(); i++){
 			char *converted = convertToCharStar(parsed[i+2].get_token());
@@ -546,6 +550,7 @@ void programRun(vector<Token> parsed){
 		arguments[numArgs] = NULL;
 
 	 		if(parsed[1].get_token().c_str()[0] == '/'){
+					success = true;
 					assigntoExecute(parsed[2].get_token().c_str(),arguments);
 		    } 
 			
@@ -556,6 +561,7 @@ void programRun(vector<Token> parsed){
 				programName.erase(0,1);
 				strcpy(finalPath,getcwd(currentDirectory, sizeof(currentDirectory)));
 				strcat(finalPath,programName.c_str());
+				success = true;
 				assigntoExecute(finalPath,arguments);
 				
 			}
@@ -571,8 +577,7 @@ void programRun(vector<Token> parsed){
 					}
 				}
 				if (pathFound){
-					//arguments[0]=convertToCharStar(correctPath.c_str());
-					//arguments[numArgs] = NULL;					
+					success = true;
 					assigntoExecute(correctPath.c_str(),arguments);
 
 				}
@@ -586,6 +591,21 @@ void programRun(vector<Token> parsed){
 
 	  
 	}
+	
+	if (success){
+		if (variableExists(parsed[1].get_token()) {
+			for (int i = 0; i < variableList.size(); i++){
+				if (variableName == variableList[i].get_name())
+					variableList[i].set_value(readfile());
+					remove("./tmpdata");
+			}
+		}
+		else 
+			variableList.push_back(Variable(parsed[1].get_token(), readfile()));{
+				remove("./tmpdata");
+			}
+				
+			}
 		
 		
 	}
@@ -685,5 +705,25 @@ bool assigntoExecute(const char *program, char *const *arguments){
 			 
 	}
 	return !failed;
+}
+
+string readFile(){
+	stringstream fileContents;
+	ifstream stream("./tmpdata");
+	if(stream.is_open()){
+		while(stream.peek() != EOF) {
+			fileContents << (char) stream.get();
+		}
+	stream.close();
+	return fileContents.str();
+	}
+}
+
+bool variableExists(string variableName){
+	for (int i = 0; i < variableList.size(); i++){
+		if (variableName == variableList[i].get_name()){
+			return true;
+	}
+	return false;
 }
 
