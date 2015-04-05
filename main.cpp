@@ -608,16 +608,22 @@ void programRun(vector<Token> parsed){
 
 		
 	if (success){
+		bool exists = false;
+		string varName = parsed[1].get_token();
+		varName.erase(0,1);
 		if (variableExists(parsed[1].get_token())) {
 			for (int i = 0; i < variableList.size(); i++){
-				if (parsed[1].get_token() == variableList[i].get_name())
+				if (varName == variableList[i].get_name()){
 					variableList[i].set_value(readDataFile());
-					//remove("./tmpdata");
+					exists = true;
+					break;
+				}
+					remove("./tmpdata");
 			}
 		}
-		else 
-			variableList.push_back(Variable(parsed[1].get_token().erase(0,1), readDataFile()));{
-				//remove("./tmpdata");
+		if(!exists) {
+			variableList.push_back(Variable(varName, readDataFile()));
+				remove("./tmpdata");
 			}
 				
 		}
@@ -682,11 +688,11 @@ char * convertToCharStar(string argument){
 }
 
 vector<string> pathScanner(string s) {
-	s+=";";
+	s+=":";
 	vector<string> pathVector;
 	int pos = 0;
 	string token;
-	while ((pos = s.find(";")) != string::npos) {
+	while ((pos = s.find(":")) != string::npos) {
 		token = s.substr(0, pos);
 		if (token!=" " && token!="" && token!="\n")
 			pathVector.push_back(token);
@@ -742,7 +748,7 @@ string readDataFile(){
 bool variableExists(string variableName){
 	variableName.erase(0,1);
 	for (int i = 0; i < variableList.size(); i++){
-		if (variableName == variableList[i].get_name()){
+		if (variableList[i].get_name() == variableName){
 			return true;
 	}
 }
