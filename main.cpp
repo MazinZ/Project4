@@ -329,6 +329,14 @@ bool parser(vector<Token> &scanned){
 				return founderror;
 			}
 			scanned[2].set_usage("cmd");
+			
+			for (int i = 3; i < scannedLength; i++)
+			{
+				ostringstream parameterCount;
+				parameterCount << "parameter " << i-2;
+				scanned[i].set_usage(parameterCount.str());
+			}
+			
 			return !founderror;
 		}
     }
@@ -552,7 +560,7 @@ void programRun(vector<Token> parsed){
 	 		if(parsed[2].get_token().c_str()[0] == '/'){
 					success = true;
 					arguments[numArgs-1] = NULL;
-
+					
 					assigntoExecute(parsed[2].get_token().c_str(),arguments);
 		    } 
 			
@@ -580,6 +588,13 @@ void programRun(vector<Token> parsed){
 				}
 				if (pathFound){
 					success = true;
+					
+					for (int i = 2; i < parsed.size(); i++){
+						char *converted = convertToCharStar(parsed[i+1].get_token());
+						arguments[i] = converted;
+					}
+					arguments[0] = convertToCharStar(parsed[2].get_token());
+					arguments[numArgs] = NULL;
 					assigntoExecute(correctPath.c_str(),arguments);
 
 				}
@@ -590,18 +605,19 @@ void programRun(vector<Token> parsed){
 				}
 		    	
 		    }
+
 		
 	if (success){
 		if (variableExists(parsed[1].get_token())) {
 			for (int i = 0; i < variableList.size(); i++){
 				if (parsed[1].get_token() == variableList[i].get_name())
 					variableList[i].set_value(readDataFile());
-					remove("./tmpdata");
+					//remove("./tmpdata");
 			}
 		}
 		else 
 			variableList.push_back(Variable(parsed[1].get_token().erase(0,1), readDataFile()));{
-				remove("./tmpdata");
+				//remove("./tmpdata");
 			}
 				
 		}
