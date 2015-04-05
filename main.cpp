@@ -457,7 +457,7 @@ void programRun(vector<Token> parsed){
 					arguments[i] = converted;
 				}
 				arguments[numArgs] = NULL;
-				execute(parsed[2].get_token().c_str(),arguments,false);
+				execute(parsed[1].get_token().c_str(),arguments,false);
 		    	
 		    } 
 			
