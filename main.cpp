@@ -11,6 +11,7 @@
 #include <iomanip>
 #include <fstream>
 #include <errno.h>
+#include <fcntl.h>
 using namespace std;
 
 struct Token{
@@ -79,6 +80,7 @@ string variableValue(string variable);
 bool execute(const char *program, char *const *arguments, bool background);
 char * convertToCharStar(string argument);
 vector<string> pathScanner(string s);
+bool assigntoExecute(const char *program, char *const *arguments);
 
 vector<Variable> variableList;
 vector<string> PATH;
@@ -505,6 +507,7 @@ void programRun(vector<Token> parsed){
 					//arguments[0]=convertToCharStar(correctPath.c_str());
 					//arguments[numArgs] = NULL;					
 					execute(correctPath.c_str(),arguments, false);
+
 				}
 				else {
 					//file not found
@@ -529,7 +532,64 @@ void programRun(vector<Token> parsed){
 	    }*/
 
 	}
-}	
+	
+	else if (parsed[0].get_usage()=="assignto"){	
+		int numArgs = parsed.size()-1;
+		char *arguments[numArgs+1];
+		char finalPath[1024];
+		
+		for (int i = 1; i < parsed.size(); i++){
+			char *converted = convertToCharStar(parsed[i+2].get_token());
+			arguments[i] = converted;
+		}
+		arguments[0] = convertToCharStar(parsed[2].get_token());
+		arguments[numArgs] = NULL;
+
+	 		if(parsed[1].get_token().c_str()[0] == '/'){
+					assigntoExecute(parsed[2].get_token().c_str(),arguments);
+		    } 
+			
+			//search Current Working Directory for program, run, passing arguments
+			else if (parsed[2].get_token().c_str()[0] == '.' && parsed[1].get_token().c_str()[2] == '/'){
+				char currentDirectory[512];
+				string programName = parsed[2].get_token();
+				programName.erase(0,1);
+				strcpy(finalPath,getcwd(currentDirectory, sizeof(currentDirectory)));
+				strcat(finalPath,programName.c_str());
+				assigntoExecute(finalPath,arguments);
+				
+			}
+			else {
+				bool pathFound = false;
+				string correctPath = "";
+				for (int i = 0; i<PATH.size(); i++){
+					correctPath = PATH[i]+"/"+parsed[2].get_token();
+					if(fileExists(correctPath)){
+						
+						pathFound = true;
+						break;
+					}
+				}
+				if (pathFound){
+					//arguments[0]=convertToCharStar(correctPath.c_str());
+					//arguments[numArgs] = NULL;					
+					assigntoExecute(correctPath.c_str(),arguments);
+
+				}
+				else {
+					//file not found
+					errno = ENOENT;
+					perror("assignto");
+				}
+		    	
+		    }
+
+	  
+	}
+		
+		
+	}
+
 
 void showInfo(vector<Token> tokens){
 	if (showTokens){
@@ -597,5 +657,33 @@ vector<string> pathScanner(string s) {
 			s.erase(0,1);
 	}
 	return pathVector;
+}
+
+bool assigntoExecute(const char *program, char *const *arguments){
+	
+	pid_t pid;
+	int state;
+	string file = "./tmpdata";
+	char *filename;
+	strcpy(filename,file.c_str());
+	bool failed = true;
+	
+	if ((pid = fork()) < 0)      
+				return failed;
+	else if (pid == 0) { 
+		int fd = open(filename, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+		dup2(fd, 1);   
+		dup2(fd, 2);   
+		close(fd);
+		
+		if (execv(program, arguments) < 0)     /* execute  */
+				return failed;
+		}
+	else {                                  
+		while (wait(&state) != pid);     /* parent waits for completion (I guess we don't execute this if bg is enabled?)  */
+								 
+			 
+	}
+	return !failed;
 }
 
