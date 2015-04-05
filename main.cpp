@@ -435,7 +435,6 @@ void programRun(vector<Token> parsed){
 	
 		int numArgs = parsed.size()-1;
 		char *arguments[numArgs+1];
-		arguments[numArgs] = NULL;
 		char finalPath[1024];
 		
 		// copy arguments (not run or filename) into the arguments array
@@ -443,6 +442,9 @@ void programRun(vector<Token> parsed){
 			char *converted = convertToCharStar(parsed[i+1].get_token());
 			arguments[i] = converted;
 		}
+		arguments[0] = convertToCharStar(parsed[1].get_token());
+		arguments[numArgs] = NULL;
+
 	   // if(forkResult == 0){
 			
 	      	//I am the child process. Run the code
@@ -450,13 +452,14 @@ void programRun(vector<Token> parsed){
 
 		    if(parsed[1].get_token().c_str()[0] == '/'){
 		    	//run directly, passing arguments
+
 		
-		
-			for (int i = 2; i < parsed.size(); i++){
-					char *converted = convertToCharStar(parsed[i].get_token());
+			/*for (int i = 1; i < parsed.size(); i++){
+					char *converted = convertToCharStar(parsed[i+1].get_token());
 					arguments[i] = converted;
 				}
-				arguments[numArgs] = NULL;
+				arguments[numArgs] = NULL;*/
+
 				execute(parsed[1].get_token().c_str(),arguments,false);
 		    	
 		    } 
@@ -473,12 +476,12 @@ void programRun(vector<Token> parsed){
 				// concatenate path above with the program name
 				strcat(finalPath,programName.c_str());
 				
-				for (int i = 2; i < parsed.size(); i++){
+				/*for (int i = 2; i < parsed.size(); i++){
 					char *converted = convertToCharStar(parsed[i].get_token());
 					arguments[i] = converted;
 					
 				}
-				arguments[numArgs] = NULL;
+				arguments[numArgs] = NULL;*/
 
 				// execute using final path and arguments
 				execute(finalPath,arguments, false);
@@ -499,8 +502,8 @@ void programRun(vector<Token> parsed){
 					}
 				}
 				if (pathFound){
-					arguments[0]=convertToCharStar(correctPath.c_str());
-					arguments[numArgs] = NULL;					
+					//arguments[0]=convertToCharStar(correctPath.c_str());
+					//arguments[numArgs] = NULL;					
 					execute(correctPath.c_str(),arguments, false);
 				}
 				else {
