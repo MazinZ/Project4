@@ -594,7 +594,7 @@ void programRun(vector<Token> parsed){
 						arguments[i] = converted;
 					}
 					arguments[0] = convertToCharStar(parsed[2].get_token());
-					arguments[numArgs] = NULL;
+					arguments[numArgs-1] = NULL;
 					assigntoExecute(correctPath.c_str(),arguments);
 
 				}
