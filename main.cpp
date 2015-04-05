@@ -551,6 +551,8 @@ void programRun(vector<Token> parsed){
 
 	 		if(parsed[2].get_token().c_str()[0] == '/'){
 					success = true;
+					arguments[numArgs-1] = NULL;
+
 					assigntoExecute(parsed[2].get_token().c_str(),arguments);
 		    } 
 			
