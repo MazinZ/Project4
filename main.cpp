@@ -576,3 +576,20 @@ char * convertToCharStar(string argument){
 	return returnval;
 }
 
+vector<string> pathScanner(string s) {
+	s+=";";
+	vector<string> pathVector;
+	int pos = 0;
+	string token;
+	while ((pos = s.find(";")) != string::npos) {
+		token = s.substr(0, pos);
+		if (token!=" " && token!="" && token!="\n")
+			pathVector.push_back(token);
+		
+		s.erase(0, pos + 1);
+		if (token == "")
+			s.erase(0,1);
+	}
+	return pathVector;
+}
+
