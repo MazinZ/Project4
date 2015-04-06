@@ -732,16 +732,16 @@ vector< const char*> getArgs( vector<Token> &parsed, const char * path){
 	if (parsed[0].get_usage()=="assignto")
 		i = 2;
 	for (; i < parsed.size(); i++){
-		if (parsed[i].get_usage()!="run" && parsed[i].get_usage()!="cmd" && parsed[i].get_usage()!="assignto" && parsed[i].get_type()!="variable" ){
+		if (parsed[i].get_usage()!="run" && parsed[i].get_usage()!="cmd" && parsed[i].get_usage()!="assignto" && parsed[i].get_type()!="variable" && parsed[i].get_usage()!="variable"){
 			arg = new char [parsed[i].get_token().length() + 1];
 			strcpy(arg,parsed[i].get_token().c_str());
 			arguments.push_back(arg);
+
 		}
-		if (parsed[i].get_type()=="variable"){
+		if (parsed[i].get_type()=="variable" || parsed[i].get_usage()=="variable"){
 			//arg = new char [parsed[i].get_token().length() + 1];
 			//strcpy(arg,parsed[i].get_token().c_str());
 			arguments.push_back((variableValue(parsed[i].get_token())).c_str());
-			cout << variableValue(parsed[i].get_token()).c_str() << endl;
 		}
 	}
 		arguments.push_back(0);
