@@ -80,10 +80,10 @@ string variableValue(string variable);
 bool execute(const char *program, char *const *arguments, bool background);
 char * convertToCharStar(string argument);
 vector<string> pathScanner(string s);
-bool assigntoExecute(const char *program, char *const *arguments);
+bool assigntoExecute(const char *program, vector<const char*> arguments);
 bool variableExists(string variableName);
 string readDataFile();
-
+vector<const char*> getArgs( vector<Token> &parsed, const char * path);
 
 vector<Variable> variableList;
 vector<string> PATH;
@@ -542,32 +542,14 @@ void programRun(vector<Token> parsed){
 	
 	else if (parsed[0].get_usage()=="assignto"){	
 		int numArgs = parsed.size()-1;
-		char *arguments[numArgs+1];
+		//char *arguments[numArgs+1];
 		char finalPath[1024];
 		bool success = false;
-		
-		for (int i = 1; i < parsed.size(); i++){
-			char *converted = convertToCharStar(parsed[i+2].get_token());
-			arguments[i] = converted;
-		}
-		
-		for (int i = 1; i < numArgs; i++){
-			if (arguments[i][0] == '$')
-				arguments[i] = convertToCharStar(variableValue(arguments[i]));
-		}
-		
-		arguments[0] = convertToCharStar(parsed[2].get_token());
-		arguments[numArgs] = NULL;
-		
-		for (int i = 1; i < numArgs-1; i++){
-			if (arguments[i][0] == '$')
-				arguments[i] = convertToCharStar(variableValue(arguments[i]));
-		}
-
-	 		if(parsed[2].get_token().c_str()[0] == '/'){
+		vector<const char*> arguments;
+	 		if((parsed[2].get_token()).c_str()[0] == '/'){
 					success = true;
-					arguments[numArgs-1] = NULL;
-					
+					arguments = getArgs(parsed,parsed[2].get_token().c_str());
+
 					assigntoExecute(parsed[2].get_token().c_str(),arguments);
 		    } 
 			
@@ -579,6 +561,8 @@ void programRun(vector<Token> parsed){
 				strcpy(finalPath,getcwd(currentDirectory, sizeof(currentDirectory)));
 				strcat(finalPath,programName.c_str());
 				success = true;
+				arguments = getArgs(parsed,finalPath);
+
 				assigntoExecute(finalPath,arguments);
 				
 			}
@@ -588,25 +572,13 @@ void programRun(vector<Token> parsed){
 				for (int i = 0; i<PATH.size(); i++){
 					correctPath = PATH[i]+"/"+parsed[2].get_token();
 					if(fileExists(correctPath)){
-						
 						pathFound = true;
 						break;
 					}
 				}
 				if (pathFound){
 					success = true;
-					
-					for (int i = 2; i < parsed.size(); i++){
-						char *converted = convertToCharStar(parsed[i+1].get_token());
-						arguments[i] = converted;
-					}
-					
-					for (int i = 1; i < numArgs-1; i++){
-						if (arguments[i][0] == '$')
-							arguments[i] = convertToCharStar(variableValue(arguments[i]));
-					}
-					arguments[0] = convertToCharStar(parsed[2].get_token());
-					arguments[numArgs-1] = NULL;
+					arguments = getArgs(parsed,correctPath.c_str());
 					assigntoExecute(correctPath.c_str(),arguments);
 
 				}
@@ -615,6 +587,7 @@ void programRun(vector<Token> parsed){
 					errno = ENOENT;
 					perror("assignto");
 				}
+				
 		    	
 		    }
 
@@ -716,7 +689,7 @@ vector<string> pathScanner(string s) {
 	return pathVector;
 }
 
-bool assigntoExecute(const char *program, char *const *arguments){
+bool assigntoExecute(const char *program, vector<const char*> arguments){
 	
 	pid_t pid;
 	int state;
@@ -734,8 +707,9 @@ bool assigntoExecute(const char *program, char *const *arguments){
 		dup2(fd, 2);   
 		close(fd);
 		
-		if (execv(program, arguments) < 0)     /* execute  */
+		if (execv(program, (char**)&arguments[0]) < 0)   /* execute  */
 				return failed;
+		
 		}
 	else {                                  
 		while (wait(&state) != pid);     /* parent waits for completion (I guess we don't execute this if bg is enabled?)  */
@@ -766,5 +740,36 @@ bool variableExists(string variableName){
 	}
 }
 return false;
+}
+
+vector< const char*> getArgs( vector<Token> &parsed, const char * path){
+	vector< const char*> arguments;
+	string command = "";
+	int i = 0;
+	char *arg;
+	arguments.push_back(path);
+	if (parsed[0].get_usage()=="run")
+		i = 1;
+	if (parsed[0].get_usage()=="assignto")
+		i = 2;
+	for (; i < parsed.size(); i++){
+		if (parsed[i].get_usage()!="run" && parsed[i].get_usage()!="cmd" && parsed[i].get_usage()!="assignto" && parsed[i].get_type()!="variable" ){
+			arg = new char [parsed[i].get_token().length() + 1];
+			strcpy(arg,parsed[i].get_token().c_str());
+			arguments.push_back(arg);
+		}
+		if (parsed[i].get_type()=="variable"){
+			//arg = new char [parsed[i].get_token().length() + 1];
+			//strcpy(arg,parsed[i].get_token().c_str());
+			arguments.push_back((variableValue(parsed[i].get_token())).c_str());
+			cout << variableValue(parsed[i].get_token()).c_str() << endl;
+		}
+	}
+	for (int i = 0; i<arguments.size(); i++)
+		cout << arguments[i] << endl;
+	arguments.push_back(0);
+	
+	delete arg;
+	return arguments;
 }
 
