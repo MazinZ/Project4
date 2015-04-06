@@ -77,7 +77,7 @@ bool parser(vector<Token> &scanned);
 void programRun(vector<Token> parsed);
 void showInfo(vector<Token> tokens);
 string variableValue(string variable);
-bool execute(const char *program, char *const *arguments, bool background);
+bool execute(const char *program, vector<const char*> arguments, bool background);
 char * convertToCharStar(string argument);
 vector<string> pathScanner(string s);
 bool assigntoExecute(const char *program, vector<const char*> arguments);
@@ -447,43 +447,19 @@ void programRun(vector<Token> parsed){
 		//it turns out we have to fork regardless of <bg>
 	
 		int numArgs = parsed.size()-1;
-		char *arguments[numArgs+1];
 		char finalPath[1024];
 		char *converted;
-		// copy arguments (not run or filename) into the arguments array
-		for (int i = 1; i < parsed.size()-1; i++){
-			if (parsed[i+1].get_token().c_str()[0]=='$'){
-				converted = convertToCharStar(variableValue(parsed[i+1].get_token()));
-			}
-			else
-				converted = convertToCharStar(parsed[i+1].get_token());
-			
-			arguments[i] = converted;
-		}
-		////////////////// TODO: Fix Bug here, command isn't getting replaced by its variable value. ////////
-		if (parsed[1].get_token().c_str()[0]=='$'){
-			arguments[0] = convertToCharStar(variableValue(parsed[1].get_token()));
-		}
-		else {
-			arguments[0] = convertToCharStar(parsed[1].get_token());
-		}
-		
-		arguments[numArgs] = NULL;
+		vector<const char*> arguments;
 
+		// copy arguments (not run or filename) into the arguments array
+		
 
 	      	//TODO: check for <bg> and act accordingly
 
 		    if(parsed[1].get_token().c_str()[0] == '/'){
 		    	//run directly, passing arguments
-
-		
-			/*for (int i = 1; i < parsed.size(); i++){
-					char *converted = convertToCharStar(parsed[i+1].get_token());
-					arguments[i] = converted;
-				}
-				arguments[numArgs] = NULL;*/
-
-				execute(parsed[1].get_token().c_str(),arguments,false);
+						arguments = getArgs(parsed,parsed[1].get_token().c_str());
+						execute(parsed[1].get_token().c_str(),arguments,false);
 		    	
 		    } 
 			
@@ -507,6 +483,7 @@ void programRun(vector<Token> parsed){
 				arguments[numArgs] = NULL;*/
 
 				// execute using final path and arguments
+				arguments = getArgs(parsed,finalPath);
 				execute(finalPath,arguments, false);
 				//const char * newDirectory = parsed[1].get_token().c_str();
 				
@@ -526,7 +503,9 @@ void programRun(vector<Token> parsed){
 				}
 				if (pathFound){
 					//arguments[0]=convertToCharStar(correctPath.c_str());
-					//arguments[numArgs] = NULL;					
+					//arguments[numArgs] = NULL;	
+					arguments = getArgs(parsed,correctPath.c_str());
+				
 					execute(correctPath.c_str(),arguments, false);
 
 				}
@@ -645,7 +624,7 @@ string variableValue(string variable) {
 	return "";
 }
 
-bool execute(const char *program, char *const *arguments, bool background) {
+bool execute(const char *program, vector<const char*> arguments, bool background){
 	pid_t pid;
 	int state;
 	bool failed = true;
@@ -653,7 +632,7 @@ bool execute(const char *program, char *const *arguments, bool background) {
 	if ((pid = fork()) < 0)      
 				return failed;
 	else if (pid == 0) {          /* child process       */
-		if (execv(program, arguments) < 0)     /* execute  */
+		if (execv(program, (char**)&arguments[0]) < 0)     /* execute  */
 				return failed;
 		}
 	else {                                  
@@ -765,11 +744,9 @@ vector< const char*> getArgs( vector<Token> &parsed, const char * path){
 			cout << variableValue(parsed[i].get_token()).c_str() << endl;
 		}
 	}
-	for (int i = 0; i<arguments.size(); i++)
-		cout << arguments[i] << endl;
-	arguments.push_back(0);
+		arguments.push_back(0);
 	
-	delete arg;
+	//delete arg;
 	return arguments;
 }
 
