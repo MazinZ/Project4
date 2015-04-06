@@ -509,10 +509,15 @@ void programRun(vector<Token> parsed){
 					execute(correctPath.c_str(),arguments, false);
 
 				}
-				else {
+			
+							
+			else {
+				if (parsed[1].get_token().c_str()[0] != '$'){
 					//file not found
 					errno = ENOENT;
 					perror("run");
+					}
+				
 				}
 		    	
 		    }
@@ -744,7 +749,7 @@ vector< const char*> getArgs( vector<Token> &parsed, const char * path){
 			arguments.push_back((variableValue(parsed[i].get_token())).c_str());
 		}
 	}
-		arguments.push_back(0);
+				arguments.push_back(0);
 	
 	//delete arg;
 	return arguments;
