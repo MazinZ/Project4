@@ -117,7 +117,7 @@ vector<string> PATH;
 bool showTokens = true;
 string promptToken = "sish >";
 //not needed for now, but might be useful later
-int childStatusCode = 0;
+int statusCode = 0;
 
 int main(){
 	string command;
