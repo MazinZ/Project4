@@ -104,7 +104,7 @@ int main(){
 	
 	//initial prompt
 	cout << promptToken;
-
+    
 	while(getline(cin, command)){
 
 		if (cin.bad()) {
@@ -131,15 +131,15 @@ int main(){
 			programRun(commandLine);
 		}
 
-		waitpid(-1,&statusCode,WNOHANG);
-
-		if(statusCode != 0){
-			processList.erase(remove(processList.begin(), processList.end(), statusCode), processList.end());
-			statusCode = 0;
-		}
-
 		//prompt for next run of while
 		cout << promptToken;
+        
+        waitpid(-1,&statusCode,WNOHANG);
+        
+        if(statusCode != 0){
+            processList.erase(remove(processList.begin(), processList.end(), statusCode), processList.end());
+            statusCode = 0;
+        }
 
 	}
 	return 0;
@@ -404,7 +404,6 @@ void programRun(vector<Token> parsed){
 			char directory[1024];	
 			if (parsed[1].get_token().c_str()[0] == '$'){
 				newDirectory = variableValue(parsed[1].get_token()).c_str();
-				//TODO: Check if newDirectory is equal to "". If so, the variable supplied does not exist.
 			}
 			else
 				newDirectory = parsed[1].get_token().c_str();
@@ -417,7 +416,6 @@ void programRun(vector<Token> parsed){
 	else if (parsed[0].get_usage()=="defprompt") {
 		if (parsed[1].get_token().c_str()[0] == '$'){
 			promptToken = variableValue(parsed[1].get_token());
-			//TODO: Check if promptToken is equal to "". If so, the variable supplied does not exist.
 		}
 		else
 			promptToken = parsed[1].get_token();
@@ -646,11 +644,11 @@ string variableValue(string variable) {
 }
 
 bool execute(const char *program, vector<const char*> arguments, bool background){
-	pid_t pid;
-	int state;
+    pid_t pid;
+    int state;
 	bool failed = true;
 	
-	if ((pid = fork()) < 0)      
+	if ((pid = fork()) < 0)
 				return failed;
 	else if (pid == 0) {          /* child process       */
 		if (execv(program, (char**)&arguments[0]) < 0)     /* execute  */
