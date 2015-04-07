@@ -93,9 +93,7 @@ string promptToken = "sish >";
 //not needed for now, but might be useful later
 pid_t statusCode;
 
-
-
-int main(){
+int main(int argc, char *argv[]){
 	string command;
 	vector<Token> commandLine;
 	bool curLineError = false;
@@ -111,6 +109,15 @@ int main(){
 	
 	//initial prompt
 	cout << promptToken;
+
+	ifstream input;
+  	streambuf* orig_cin = 0;
+  	if (argc >= 3 && strncmp(argv[1],"<",1) == 0) {
+    	input.open(argv[2]);
+    	if (!input) return 1;
+    	orig_cin = cin.rdbuf(input.rdbuf());
+    	cin.tie(0); // tied to cout by default
+ 	}
     
 	while(getline(cin, command)){
 

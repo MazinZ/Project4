@@ -1,0 +1,4 @@
+cd /
+run /bin/cat file1 file2 file3
+run ls -lt
+run /bin/wc file1

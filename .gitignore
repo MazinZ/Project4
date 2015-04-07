@@ -4,3 +4,5 @@ sish
 main
 
 .DS_Store
+
+*.o
