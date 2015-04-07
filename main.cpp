@@ -91,7 +91,7 @@ vector<string> PATH;
 bool showTokens = true;
 string promptToken = "sish >";
 //not needed for now, but might be useful later
-pid_t statusCode = 0;
+pid_t statusCode;
 
 int main(){
 	string command;
@@ -133,11 +133,10 @@ int main(){
 
 		//prompt for next run of while
 		cout << promptToken;
-        
-        waitpid(-1,&statusCode,WNOHANG);
-        
-        if(statusCode != 0){
-            processList.erase(remove(processList.begin(), processList.end(), statusCode), processList.end());
+		pid_t childpid = waitpid(-1,&statusCode,WNOHANG);
+
+        if(childpid > 0){
+            processList.erase(remove(processList.begin(), processList.end(), childpid), processList.end());
             statusCode = 0;
         }
 
