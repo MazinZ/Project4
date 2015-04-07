@@ -460,6 +460,14 @@ void programRun(vector<Token> parsed){
 	else if (parsed[0].get_usage()=="bye"){
 		exit(0);
 	}
+	else if (parsed[0].get_token() == "run" && parsed[1].get_token()=="echo" && parsed[2].get_token()=="$PATH"){
+		vector<const char*> arguments;
+		arguments.push_back("/bin/echo");
+		arguments.push_back(variableValue("$PATH").c_str());
+		arguments.push_back(0);
+
+		execute("/bin/echo", arguments, false);
+	}
 	else if (parsed[0].get_usage()=="run"){
 		bool backgrounded = false;
 
@@ -748,7 +756,9 @@ string readDataFile(){
 }
 
 bool variableExists(string variableName){
-	variableName.erase(0,1);
+	string variablenam = variableName;
+	if (variableName.c_str()[0] == '$')
+		variablenam.erase(0,1);
 	for (int i = 0; i < variableList.size(); i++){
 		if (variableList[i].get_name() == variableName){
 			return true;
@@ -769,18 +779,23 @@ vector< const char*> getArgs( vector<Token> &parsed, const char * path){
 		i = 2;
 	for (; i < parsed.size(); i++){
 		if (parsed[i].get_usage()!="run" && parsed[i].get_usage()!="cmd" && parsed[i].get_usage()!="assignto" && parsed[i].get_type()!="variable" && parsed[i].get_usage()!="variable"){
+			if (parsed[i].get_token()!="$PATH"){ 
 			arg = new char [parsed[i].get_token().length() + 1];
 			strcpy(arg,parsed[i].get_token().c_str());
 			arguments.push_back(arg);
+			}
 
 		}
-		if (parsed[i].get_type()=="variable" || parsed[i].get_usage()=="variable"){
-			arg = new char [parsed[i].get_token().length() + 1];
-			strcpy(arg,variableValue(parsed[i].get_token()).c_str());
-			arguments.push_back(arg);
+		if ((parsed[i].get_type()=="variable" || parsed[i].get_usage()=="variable")){
+			if (parsed[i].get_token()!="$PATH"){ 
+				arg = new char [parsed[i].get_token().length() + 1];
+				strcpy(arg,variableValue(parsed[i].get_token()).c_str());
+				arguments.push_back(arg);
+			}
 		}
 	}
-				arguments.push_back(0);
+	
+		arguments.push_back(0);
 	
 	//delete arg;
 	return arguments;
