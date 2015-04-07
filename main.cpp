@@ -656,9 +656,13 @@ bool execute(const char *program, vector<const char*> arguments, bool background
 		if (execv(program, (char**)&arguments[0]) < 0)     /* execute  */
 				return failed;
 		}
-	else {                                  
-		while (wait(&state) != pid);     /* parent waits for completion (I guess we don't execute this if bg is enabled?)  */
-								 
+	else {                     
+		if(!background){             
+			while (wait(&state) != pid);     /* parent waits for completion (we don't execute this if bg is enabled)  */
+		} else {
+			//bg is enabled. Add the PID to the list.
+			processList.push_back(pid);
+		}	 
 			 
 	}
 	return !failed;
@@ -712,7 +716,7 @@ bool assigntoExecute(const char *program, vector<const char*> arguments){
 		
 		}
 	else {                                  
-		while (wait(&state) != pid);     /* parent waits for completion (I guess we don't execute this if bg is enabled?)  */
+		while (wait(&state) != pid);     /* parent waits for completion always with assignto */
 								 
 			 
 	}
