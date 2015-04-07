@@ -616,20 +616,21 @@ void programRun(vector<Token> &parsed){
 	if (success){
 		bool exists = false;
 		string varName = parsed[1].get_token();
-		varName.erase(0,1);
+		string varName2 = varName.erase(0,1);
+
 		if (variableExists(parsed[1].get_token())) {
 			for (int i = 0; i < variableList.size(); i++){
-				if (varName == variableList[i].get_name()){
+				if (varName2 == variableList[i].get_name()){
 					variableList[i].set_value(readDataFile());
 					exists = true;
 					break;
 				}
-					remove("./tmpdata");
+					//remove("./tmpdata");
 			}
 		}
 		if(!exists) {
-			variableList.push_back(Variable(varName, readDataFile()));
-				remove("./tmpdata");
+			variableList.push_back(Variable(varName2, readDataFile()));
+				//remove("./tmpdata");
 			}
 				
 		}
@@ -721,7 +722,7 @@ bool assigntoExecute(const char *program, vector<const char*> arguments){
 	const char * file = "./tmpdata";
 	bool failed = true;
 	
-	
+	remove("./tmpdata");
 	if ((pid = fork()) < 0)      
 				return failed;
 	else if (pid == 0) { 
@@ -760,7 +761,7 @@ bool variableExists(string variableName){
 	if (variableName.c_str()[0] == '$')
 		variablenam.erase(0,1);
 	for (int i = 0; i < variableList.size(); i++){
-		if (variableList[i].get_name() == variableName){
+		if (variablenam==variableList[i].get_name()){
 			return true;
 	}
 }
