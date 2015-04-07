@@ -13,5 +13,49 @@ To compile sish:
 To delete compiled files:
 	make clean
 
-Known Limitations:
+To run:
+	cd to the directory sish is in.
+	./sish
+	At the prompt, type commands.
+	sish > (command goes here)
 
+To run by passing a file:
+	cd to the directory sish is in.
+	Place the file you want to run in the same directory (optional, but recommended)
+	./sish < filename
+	OR
+	./sish < ./filename
+
+Known Limitations:
+	- When invoking sish and passing a file (for example: "sish < testfile"), 
+		there MUST be an extra blank line below the last command, or the final command will not be executed.
+		This is less a limitation of our program and more a limitation of cin.
+	
+
+Sish accepts the following commands:
+	Comments
+		# A comment can go here.
+	Variable Assignments
+		variable = value
+	Changing Shell Prompt
+		defprompt prompt
+		defprompt "multi word prompt >"
+	Changing Directory
+		cd directoryName
+	List Background Processes
+		listprocs
+	Quit
+		bye
+	Run Programs
+		run cmd params [<bg>]
+	Assign Run Result to Variable
+		assignto variable cmd params
+
+Special Variables:
+	PATH
+		A colon-separated list of directories to search for programs in. Defaults to "/bin:/usr/bin"
+		PATH = "/bin:/usr/bin"
+	ShowTokens
+		A variable that lets the shell know whether or not to show parser and scanner (debug) information. 1=YES, 0=NO
+		ShowTokens = 1
+		ShowTokens = 0
