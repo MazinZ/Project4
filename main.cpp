@@ -475,7 +475,7 @@ void programRun(vector<Token> parsed){
 		    if(parsed[1].get_token().c_str()[0] == '/'){
 		    	//run directly, passing arguments
 						arguments = getArgs(parsed,parsed[1].get_token().c_str());
-						execute(parsed[1].get_token().c_str(),arguments,false);
+						execute(parsed[1].get_token().c_str(),arguments,backgrounded);
 		    	
 		    } 
 			
@@ -500,7 +500,7 @@ void programRun(vector<Token> parsed){
 
 				// execute using final path and arguments
 				arguments = getArgs(parsed,finalPath);
-				execute(finalPath,arguments, false);
+				execute(finalPath,arguments, backgrounded);
 				//const char * newDirectory = parsed[1].get_token().c_str();
 				
 			}
@@ -522,7 +522,7 @@ void programRun(vector<Token> parsed){
 					//arguments[numArgs] = NULL;	
 					arguments = getArgs(parsed,correctPath.c_str());
 				
-					execute(correctPath.c_str(),arguments, false);
+					execute(correctPath.c_str(),arguments, backgrounded);
 
 				}
 			
