@@ -70,32 +70,6 @@ struct Variable{
 		
 };
 
-struct Process{
-	public:
-		Process(int v)
-		{
-			name = "";
-			value = v;	
-		}
-		string get_name()
-		{
-			return name;
-		}
-		int get_value() {
-			return value;
-		}
-		void set_value(int v){
-			value = v;
-		}
-		void set_name(int v){
-			value = v;
-		}
-	private:
-		string name;
-		int value;
-		
-};
-
 string typeGet(string token);
 string upper(string s);
 vector<Token> scanner(string s);
@@ -112,12 +86,12 @@ string readDataFile();
 vector<const char*> getArgs( vector<Token> &parsed, const char * path);
 
 vector<Variable> variableList;
-vector<Process> processList;
+vector<pid_t> processList;
 vector<string> PATH;
 bool showTokens = true;
 string promptToken = "sish >";
 //not needed for now, but might be useful later
-int statusCode = 0;
+pid_t statusCode = 0;
 
 int main(){
 	string command;
@@ -421,7 +395,7 @@ void programRun(vector<Token> parsed){
 		} else {
 			for (int i = 0; i < processList.size(); i++)
 			{
-				cout << processList[i].get_value() << ": " << processList[i].get_name() << endl;
+				cout << "Process " << i+1 << ": PID " << processList[i].get_value() << endl;
 			}
 		}
 	}
@@ -497,9 +471,6 @@ void programRun(vector<Token> parsed){
 		vector<const char*> arguments;
 
 		// copy arguments (not run or filename) into the arguments array
-		
-
-	      	//TODO: check for <bg> and act accordingly
 
 		    if(parsed[1].get_token().c_str()[0] == '/'){
 		    	//run directly, passing arguments
