@@ -74,7 +74,7 @@ string typeGet(string token);
 string upper(string s);
 vector<Token> scanner(string s);
 bool parser(vector<Token> &scanned);
-void programRun(vector<Token> parsed);
+void programRun(vector<Token> &parsed);
 void showInfo(vector<Token> tokens);
 string variableValue(string variable);
 bool execute(const char *program, vector<const char*> arguments, bool background);
@@ -125,6 +125,9 @@ int main(){
 		}
 
 		//scanner
+		//if (*command.rbegin()=='\n'){
+			//command = command.substr(0, command.size()-1);
+		//}
 		commandLine = scanner(command);
 
 		//parser
@@ -391,7 +394,7 @@ bool fileExists(string filepath)
 	}
 }
 
-void programRun(vector<Token> parsed){
+void programRun(vector<Token> &parsed){
 	const char * newDirectory;
 
 	if (parsed[0].get_usage()=="listprocs"){
@@ -533,7 +536,6 @@ void programRun(vector<Token> parsed){
 					//arguments[0]=convertToCharStar(correctPath.c_str());
 					//arguments[numArgs] = NULL;	
 					arguments = getArgs(parsed,correctPath.c_str());
-				
 					execute(correctPath.c_str(),arguments, backgrounded);
 
 				}
@@ -716,16 +718,14 @@ bool assigntoExecute(const char *program, vector<const char*> arguments){
 	
 	pid_t pid;
 	int state;
-	string file = "./tmpdata";
-	char *filename;
-	strcpy(filename,file.c_str());
+	const char * file = "./tmpdata";
 	bool failed = true;
 	
 	
 	if ((pid = fork()) < 0)      
 				return failed;
 	else if (pid == 0) { 
-		int fd = open(filename, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+		int fd = open(file, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
 		dup2(fd, 1);   
 		dup2(fd, 2);   
 		close(fd);
@@ -768,35 +768,43 @@ return false;
 }
 
 vector< const char*> getArgs( vector<Token> &parsed, const char * path){
+	cout << "ENTER\n";
 	vector< const char*> arguments;
 	string command = "";
 	int i = 0;
 	char *arg;
 	arguments.push_back(path);
+	cout << "here\n";
+
 	if (parsed[0].get_usage()=="run")
-		i = 1;
-	if (parsed[0].get_usage()=="assignto" || (parsed[0].get_usage()=="run" && parsed[1].get_type()=="variable" && parsed[1].get_usage()=="cmd" ))
 		i = 2;
+	if (parsed[0].get_usage()=="assignto" || (parsed[0].get_usage()=="run" && parsed[1].get_type()=="variable" && parsed[1].get_usage()=="cmd" && parsed[1].get_token().c_str()[0]!='#' ))
+		i = 2;
+
 	for (; i < parsed.size(); i++){
-		if (parsed[i].get_usage()!="run" && parsed[i].get_usage()!="cmd" && parsed[i].get_usage()!="assignto" && parsed[i].get_type()!="variable" && parsed[i].get_usage()!="variable"){
+		if (parsed[i].get_usage()!="run" && parsed[i].get_usage()!="cmd" && parsed[i].get_usage()!="assignto" && parsed[i].get_type()!="variable" && parsed[i].get_usage()!="variable"  && parsed[1].get_token().c_str()[0]!='#'){
 			if (parsed[i].get_token()!="$PATH"){ 
+
 			arg = new char [parsed[i].get_token().length() + 1];
+
 			strcpy(arg,parsed[i].get_token().c_str());
 			arguments.push_back(arg);
 			}
 
 		}
-		if ((parsed[i].get_type()=="variable" || parsed[i].get_usage()=="variable")){
+		if ((parsed[i].get_type()=="variable" || parsed[i].get_usage()=="variable" )){
 			if (parsed[i].get_token()!="$PATH"){ 
-				arg = new char [parsed[i].get_token().length() + 1];
+				arg = new char [variableValue(parsed[i].get_token()).length() + 1];
 				strcpy(arg,variableValue(parsed[i].get_token()).c_str());
 				arguments.push_back(arg);
 			}
 		}
 	}
 	
+		
 		arguments.push_back(0);
 	
+	cout << "EXIT\n";
 	//delete arg;
 	return arguments;
 }
