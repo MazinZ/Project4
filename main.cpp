@@ -531,6 +531,17 @@ void programRun(vector<Token> parsed){
 					errno = ENOENT;
 					perror("run");
 					}
+				else {
+					string varval = variableValue((parsed[1].get_token()));
+					if(varval!=""){
+						arguments = getArgs(parsed, varval.c_str());
+						for (int i = 0; i<arguments.size()-1;i++){
+							cout << arguments[i];
+						}
+						execute(varval.c_str(),arguments,backgrounded);
+					
+					}
+				}
 				
 				}
 		    	
@@ -752,7 +763,7 @@ vector< const char*> getArgs( vector<Token> &parsed, const char * path){
 	arguments.push_back(path);
 	if (parsed[0].get_usage()=="run")
 		i = 1;
-	if (parsed[0].get_usage()=="assignto")
+	if (parsed[0].get_usage()=="assignto" || (parsed[0].get_usage()=="run" && parsed[1].get_type()=="variable" && parsed[1].get_usage()=="cmd" ))
 		i = 2;
 	for (; i < parsed.size(); i++){
 		if (parsed[i].get_usage()!="run" && parsed[i].get_usage()!="cmd" && parsed[i].get_usage()!="assignto" && parsed[i].get_type()!="variable" && parsed[i].get_usage()!="variable"){
