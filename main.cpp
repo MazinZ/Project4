@@ -535,9 +535,7 @@ void programRun(vector<Token> parsed){
 					string varval = variableValue((parsed[1].get_token()));
 					if(varval!=""){
 						arguments = getArgs(parsed, varval.c_str());
-						for (int i = 0; i<arguments.size()-1;i++){
-							cout << arguments[i];
-						}
+						
 						execute(varval.c_str(),arguments,backgrounded);
 					
 					}
