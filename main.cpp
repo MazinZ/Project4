@@ -215,7 +215,7 @@ string upper(string s){
 
 bool parser(vector<Token> &scanned){
 	bool founderror = true;
-	int scannedLength = scanned.size();
+	int scannedLength = (int)scanned.size();
 	if (scannedLength == 0)
 		return founderror;
 		
@@ -385,7 +385,6 @@ bool fileExists(string filepath)
 }
 
 void programRun(vector<Token> parsed){
-	int parsedLength = parsed.size();
 	const char * newDirectory;
 
 	if (parsed[0].get_usage()=="listprocs"){
@@ -400,7 +399,6 @@ void programRun(vector<Token> parsed){
 	}
 
 	else if (parsed[0].get_usage()=="cd"){
-			char directory[1024];	
 			if (parsed[1].get_token().c_str()[0] == '$'){
 				newDirectory = variableValue(parsed[1].get_token()).c_str();
 			}
@@ -462,9 +460,7 @@ void programRun(vector<Token> parsed){
 
 		//it turns out we have to fork regardless of <bg>
 	
-		int numArgs = parsed.size()-1;
 		char finalPath[1024];
-		char *converted;
 		vector<const char*> arguments;
 
 		// copy arguments (not run or filename) into the arguments array
@@ -546,9 +542,7 @@ void programRun(vector<Token> parsed){
 
 	}
 	
-	else if (parsed[0].get_usage()=="assignto"){	
-		int numArgs = parsed.size()-1;
-		//char *arguments[numArgs+1];
+	else if (parsed[0].get_usage()=="assignto"){
 		char finalPath[1024];
 		bool success = false;
 		vector<const char*> arguments;
@@ -687,7 +681,7 @@ vector<string> pathScanner(string s) {
 	vector<string> pathVector;
 	int pos = 0;
 	string token;
-	while ((pos = s.find(":")) != string::npos) {
+	while ((pos = (int)s.find(":")) != string::npos) {
 		token = s.substr(0, pos);
 		if (token!=" " && token!="" && token!="\n")
 			pathVector.push_back(token);
