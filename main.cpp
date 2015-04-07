@@ -134,7 +134,7 @@ int main(){
 		waitpid(-1,&statusCode,WNOHANG);
 
 		if(statusCode != 0){
-			//TODO: remove the process from the list
+			processList.erase(remove(processList.begin(), processList.end(), statusCode), processList.end());
 			statusCode = 0;
 		}
 
@@ -395,7 +395,7 @@ void programRun(vector<Token> parsed){
 		} else {
 			for (int i = 0; i < processList.size(); i++)
 			{
-				cout << "Process " << i+1 << ": PID " << processList[i].get_value() << endl;
+				cout << "Process " << i+1 << ": PID " << processList[i] << endl;
 			}
 		}
 	}
