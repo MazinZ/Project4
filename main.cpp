@@ -768,13 +768,11 @@ return false;
 }
 
 vector< const char*> getArgs( vector<Token> &parsed, const char * path){
-	cout << "ENTER\n";
 	vector< const char*> arguments;
 	string command = "";
 	int i = 0;
 	char *arg;
 	arguments.push_back(path);
-	cout << "here\n";
 
 	if (parsed[0].get_usage()=="run")
 		i = 2;
@@ -804,7 +802,6 @@ vector< const char*> getArgs( vector<Token> &parsed, const char * path){
 		
 		arguments.push_back(0);
 	
-	cout << "EXIT\n";
 	//delete arg;
 	return arguments;
 }
