@@ -70,6 +70,32 @@ struct Variable{
 		
 };
 
+struct Process{
+	public:
+		Process(int v)
+		{
+			name = "";
+			value = v;	
+		}
+		string get_name()
+		{
+			return name;
+		}
+		int get_value() {
+			return value;
+		}
+		void set_value(int v){
+			value = v;
+		}
+		void set_name(int v){
+			value = v;
+		}
+	private:
+		string name;
+		int value;
+		
+};
+
 string typeGet(string token);
 string upper(string s);
 vector<Token> scanner(string s);
@@ -86,6 +112,7 @@ string readDataFile();
 vector<const char*> getArgs( vector<Token> &parsed, const char * path);
 
 vector<Variable> variableList;
+vector<Process> processList;
 vector<string> PATH;
 bool showTokens = true;
 string promptToken = "sish >";
@@ -128,6 +155,13 @@ int main(){
 
 			//runner
 			programRun(commandLine);
+		}
+
+		waitpid(-1,&statusCode,WNOHANG);
+
+		if(statusCode != 0){
+			//TODO: remove the process from the list
+			statusCode = 0;
 		}
 
 		//prompt for next run of while
@@ -381,7 +415,18 @@ void programRun(vector<Token> parsed){
 	int parsedLength = parsed.size();
 	const char * newDirectory;
 
-	if (parsed[0].get_usage()=="cd"){
+	if (parsed[0].get_usage()=="listprocs"){
+		if(processList.size() == 0){
+			cout << "No running processes." << endl;
+		} else {
+			for (int i = 0; i < processList.size(); i++)
+			{
+				cout << processList[i].get_value() << ": " << processList[i].get_name() << endl;
+			}
+		}
+	}
+
+	else if (parsed[0].get_usage()=="cd"){
 			char directory[1024];	
 			if (parsed[1].get_token().c_str()[0] == '$'){
 				newDirectory = variableValue(parsed[1].get_token()).c_str();
