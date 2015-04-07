@@ -87,11 +87,13 @@ vector<const char*> getArgs( vector<Token> &parsed, const char * path);
 
 vector<Variable> variableList;
 vector<pid_t> processList;
-vector<string> PATH;
+vector<string> PATHVECTOR;
 bool showTokens = true;
 string promptToken = "sish >";
 //not needed for now, but might be useful later
 pid_t statusCode;
+
+
 
 int main(){
 	string command;
@@ -99,8 +101,13 @@ int main(){
 	bool curLineError = false;
 
 	//take care of PATH
-	PATH.push_back("/bin");
-	PATH.push_back("/usr/bin");
+
+	PATHVECTOR.push_back("/bin");
+	PATHVECTOR.push_back("/usr/bin");
+
+	if (!variableExists("PATH")){
+		variableList.push_back(Variable("PATH","/bin:/usr/bin"));
+	}
 	
 	//initial prompt
 	cout << promptToken;
@@ -428,9 +435,13 @@ void programRun(vector<Token> parsed){
 			}
 		} else if (parsed[0].get_token() == "PATH")
 		{
-			PATH.clear();
-			PATH = pathScanner(parsed[2].get_token());
-
+			
+			PATHVECTOR.clear();
+			PATHVECTOR = pathScanner(parsed[2].get_token());
+			for (int i = 0; i < variableList.size(); i++){
+				if (variableList[i].get_name()=="PATH")
+					variableList[i].set_value(parsed[2].get_token());
+			}
 		}
 
 		bool exists = false;
@@ -502,8 +513,8 @@ void programRun(vector<Token> parsed){
 			else {
 				bool pathFound = false;
 				string correctPath = "";
-				for (int i = 0; i<PATH.size(); i++){
-					correctPath = PATH[i]+"/"+parsed[1].get_token();
+				for (int i = 0; i<PATHVECTOR.size(); i++){
+					correctPath = PATHVECTOR[i]+"/"+parsed[1].get_token();
 					if(fileExists(correctPath)){
 						
 						pathFound = true;
@@ -569,8 +580,8 @@ void programRun(vector<Token> parsed){
 			else {
 				bool pathFound = false;
 				string correctPath = "";
-				for (int i = 0; i<PATH.size(); i++){
-					correctPath = PATH[i]+"/"+parsed[2].get_token();
+				for (int i = 0; i<PATHVECTOR.size(); i++){
+					correctPath = PATHVECTOR[i]+"/"+parsed[2].get_token();
 					if(fileExists(correctPath)){
 						pathFound = true;
 						break;
@@ -764,9 +775,9 @@ vector< const char*> getArgs( vector<Token> &parsed, const char * path){
 
 		}
 		if (parsed[i].get_type()=="variable" || parsed[i].get_usage()=="variable"){
-			//arg = new char [parsed[i].get_token().length() + 1];
-			//strcpy(arg,parsed[i].get_token().c_str());
-			arguments.push_back((variableValue(parsed[i].get_token())).c_str());
+			arg = new char [parsed[i].get_token().length() + 1];
+			strcpy(arg,variableValue(parsed[i].get_token()).c_str());
+			arguments.push_back(arg);
 		}
 	}
 				arguments.push_back(0);
