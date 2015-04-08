@@ -69,25 +69,39 @@ struct Variable{
 		string value;
 		
 };
-
+// Gets the type of each token
+	// takes token, returns type
 string typeGet(string token);
+// Converts a string to an uppercase string for input checking purposes
 string upper(string s);
+// Returns a tokenized vector
 vector<Token> scanner(string s);
+// Parses the input, checks for correctness
 bool parser(vector<Token> &scanned);
+// Runs the given function
 void programRun(vector<Token> &parsed);
+// Shows info about the variables
 void showInfo(vector<Token> tokens);
+// Returns the variable value given a variable name
 string variableValue(string variable);
+// Executes a function when the command is run
 bool execute(const char *program, vector<const char*> arguments, bool background);
+// Converts a string to a char *
 char * convertToCharStar(string argument);
+// Parses the PATH variable and returns a tokenized vector
 vector<string> pathScanner(string s);
+// Executes a function when the command is assignto
 bool assigntoExecute(const char *program, vector<const char*> arguments);
+// Checks if the variable exists
 bool variableExists(string variableName);
+// Reads the temporary data file for assignto
 string readDataFile();
+// Gets arguments to run a function
 vector<const char*> getArgs( vector<Token> &parsed, const char * path);
 
-vector<Variable> variableList;
+vector<Variable> variableList; // List of all variables
 vector<pid_t> processList;
-vector<string> PATHVECTOR;
+vector<string> PATHVECTOR; // Tokenized "PATH" variable
 bool showTokens = true;
 string promptToken = "sish >";
 //not needed for now, but might be useful later
@@ -542,6 +556,7 @@ void programRun(vector<Token> &parsed){
 			
 							
 			else {
+				// if it's not a variable then it must be an error
 				if (parsed[1].get_token().c_str()[0] != '$'){
 					//file not found
 					errno = ENOENT;
@@ -667,6 +682,7 @@ string variableValue(string variable) {
 	return "";
 }
 
+// This is only used for the run command
 bool execute(const char *program, vector<const char*> arguments, bool background){
     pid_t pid;
     int state;
