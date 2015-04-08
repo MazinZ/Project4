@@ -212,7 +212,7 @@ string typeGet(string token){
 	}
 	else if (token.c_str()[0] == '$' && token.length() > 1)
 	{
-		for (int i = 1; i < token.length(); i++)
+		for (size_t i = 1; i < token.length(); i++)
 		{
 			if (!isalnum(token[i]))
 			{
@@ -231,7 +231,7 @@ string typeGet(string token){
 string upper(string s){
    string uppercase = "";
 
-   for(int i = 0; i < s.length(); i++)
+   for(size_t i = 0; i < s.length(); i++)
        uppercase += toupper(s[i]);
 
    return uppercase;
@@ -418,7 +418,7 @@ void programRun(vector<Token> &parsed){
 		if(processList.size() == 0){
 			cout << "No running processes." << endl;
 		} else {
-			for (int i = 0; i < processList.size(); i++)
+			for (size_t i = 0; i < processList.size(); i++)
 			{
 				cout << "Process " << i+1 << ": PID " << processList[i] << endl;
 			}
@@ -458,14 +458,14 @@ void programRun(vector<Token> &parsed){
 			
 			PATHVECTOR.clear();
 			PATHVECTOR = pathScanner(parsed[2].get_token());
-			for (int i = 0; i < variableList.size(); i++){
+			for (size_t i = 0; i < variableList.size(); i++){
 				if (variableList[i].get_name()=="PATH")
 					variableList[i].set_value(parsed[2].get_token());
 			}
 		}
 
 		bool exists = false;
-		for (int i = 0; i < variableList.size(); i++){
+		for (size_t i = 0; i < variableList.size(); i++){
 			if (parsed[0].get_token() == variableList[i].get_name()){
 				variableList[i].set_value(parsed[2].get_token());
 				exists = true;
@@ -541,7 +541,7 @@ void programRun(vector<Token> &parsed){
 			else {
 				bool pathFound = false;
 				string correctPath = "";
-				for (int i = 0; i<PATHVECTOR.size(); i++){
+				for (size_t i = 0; i<PATHVECTOR.size(); i++){
 					correctPath = PATHVECTOR[i]+"/"+parsed[1].get_token();
 					if(fileExists(correctPath)){
 						
@@ -608,7 +608,7 @@ void programRun(vector<Token> &parsed){
 			else {
 				bool pathFound = false;
 				string correctPath = "";
-				for (int i = 0; i<PATHVECTOR.size(); i++){
+				for (size_t i = 0; i<PATHVECTOR.size(); i++){
 					correctPath = PATHVECTOR[i]+"/"+parsed[2].get_token();
 					if(fileExists(correctPath)){
 						pathFound = true;
@@ -637,7 +637,7 @@ void programRun(vector<Token> &parsed){
 		string varName2 = varName.erase(0,1);
 
 		if (variableExists(parsed[1].get_token())) {
-			for (int i = 0; i < variableList.size(); i++){
+			for (size_t i = 0; i < variableList.size(); i++){
 				if (varName2 == variableList[i].get_name()){
 					variableList[i].set_value(readDataFile());
 					exists = true;
@@ -663,7 +663,7 @@ void programRun(vector<Token> &parsed){
 
 void showInfo(vector<Token> tokens){
 	if (showTokens){
- 		for (int i = 0; i < tokens.size(); i++){
+ 		for (size_t i = 0; i < tokens.size(); i++){
  			cout << "Token Type = ";
  			cout << setw(10) << left << tokens[i].get_type();
  			cout << "Token = ";
@@ -678,7 +678,7 @@ void showInfo(vector<Token> tokens){
 // and the value of the variable is returned.
 string variableValue(string variable) {
 	string variableName = variable.erase(0,1);
-	for (int i = 0; i < variableList.size(); i++){
+	for (size_t i = 0; i < variableList.size(); i++){
 		if (variableList[i].get_name()==variableName)
 			return variableList[i].get_value();
 	}
@@ -720,9 +720,9 @@ char * convertToCharStar(string argument){
 vector<string> pathScanner(string s) {
 	s+=":";
 	vector<string> pathVector;
-	int pos = 0;
+	size_t pos = 0;
 	string token;
-	while ((pos = (int)s.find(":")) != string::npos) {
+	while ((pos = s.find(":")) != string::npos) {
 		token = s.substr(0, pos);
 		if (token!=" " && token!="" && token!="\n")
 			pathVector.push_back(token);
@@ -779,7 +779,7 @@ bool variableExists(string variableName){
 	string variablenam = variableName;
 	if (variableName.c_str()[0] == '$')
 		variablenam.erase(0,1);
-	for (int i = 0; i < variableList.size(); i++){
+	for (size_t i = 0; i < variableList.size(); i++){
 		if (variablenam==variableList[i].get_name()){
 			return true;
 	}
@@ -790,7 +790,7 @@ return false;
 vector< const char*> getArgs( vector<Token> &parsed, const char * path){
 	vector< const char*> arguments;
 	string command = "";
-	int i = 0;
+	size_t i = 0;
 	char *arg;
 	arguments.push_back(path);
 
