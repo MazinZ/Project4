@@ -1,3 +1,6 @@
+// CS485, project 4
+// Mazin Zakaria, Ethan Gill
+
 #include <stdlib.h>
 #include <unistd.h>
 #include <iostream>
