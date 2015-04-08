@@ -1,0 +1,95 @@
+CS 485G Project 4
+Ethan Gill
+Mazin Zakaria
+
+Sish is a simple shell.
+
+Files:
+	sish.cpp
+
+To compile sish:
+	make
+
+To delete compiled files:
+	make clean
+
+To run:
+	cd to the directory sish is in.
+	./sish
+	At the prompt, type commands.
+	sish > (command goes here)
+
+To run by passing a file:
+	cd to the directory sish is in.
+	Place the file you want to run in the same directory (optional, but recommended)
+	./sish < filename
+	OR
+	./sish < ./filename
+
+Design Choices:
+	- Assignto must take a variable in the form of $var, rather than var.
+	- Comments must be on their own line.
+	- Setting the PATH variable resets its value.
+
+Known Limitations:
+	- When invoking sish and passing a file (for example: "sish < testfile"), 
+		there MUST be an extra blank line below the last command, or the final command will not be executed.
+			
+
+Sish accepts the following commands:
+	Comments
+		# A comment can go here.
+	Variable Assignments
+		variable = value
+	Changing Shell Prompt
+		defprompt prompt
+		defprompt "multi word prompt >"
+	Changing Directory
+		cd directoryName
+	List Background Processes
+		listprocs
+	Quit
+		bye
+	Run Programs
+		run cmd params [<bg>]
+	Assign Run Result to Variable
+		assignto variable cmd params
+
+Special Variables:
+	PATH
+		A colon-separated list of directories to search for programs in. Defaults to "/bin:/usr/bin"
+		PATH = "/bin:/usr/bin"
+	ShowTokens
+		A variable that lets the shell know whether or not to show parser and scanner (debug) information. 1=YES, 0=NO
+		ShowTokens = 1
+		ShowTokens = 0
+
+Supplementary Functions:
+	// Gets the type of each token
+string typeGet(string token);
+	// Converts a string to an uppercase string for input checking purposes
+string upper(string s);
+	// Returns a tokenized vector
+vector<Token> scanner(string s);
+	// Parses the input, checks for correctness
+bool parser(vector<Token> &scanned);
+	// Runs the given function
+void programRun(vector<Token> &parsed);
+	// Shows info about the variables
+void showInfo(vector<Token> tokens);
+	// Returns the variable value given a variable name
+string variableValue(string variable);
+	// Executes a function when the command is run
+bool execute(const char *program, vector<const char*> arguments, bool background);
+	// Converts a string to a char *
+char * convertToCharStar(string argument);
+	// Parses the PATH variable and returns a tokenized vector
+vector<string> pathScanner(string s);
+	// Executes a function when the command is assignto
+bool assigntoExecute(const char *program, vector<const char*> arguments);
+	// Checks if the variable exists
+bool variableExists(string variableName);
+	// Reads the temporary data file for assignto
+string readDataFile();
+	// Gets arguments to run a function
+vector<const char*> getArgs( vector<Token> &parsed, const char * path);
